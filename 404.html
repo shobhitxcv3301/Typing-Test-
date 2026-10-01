@@ -1,0 +1,2522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeFlow AI — Typing Test & Certification</title>
+<meta name="description" content="TypeFlow AI is a typing practice, speed test, coaching, and local certification experience.">
+<meta name="theme-color" content="#0a0a12">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="brand" id="brandLogo">
+      <div class="brand-mark">T</div>
+      <div>
+        <div class="brand-name">TypeFlow <span class="ai-chip"><span class="dot"></span>AI</span></div>
+        <div class="brand-sub">find your flow</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="greeting" id="greeting"></div>
+      <button class="admin-pill" id="adminPill">🛡️ Admin</button>
+      <button class="pro-badge" id="proBadge">⭐ Pro</button>
+      <button class="icon-btn ai" id="coachBtn" title="AI Coach">🤖</button>
+      <button class="icon-btn" id="accentBtn" title="Theme">🎨</button>
+      <button class="icon-btn" id="themeBtn" title="Light/dark">🌙</button>
+    </div>
+  </header>
+
+  <div class="nav-tabs" id="mainNavTabs">
+    <button class="nav-tab active" data-view="practice">🎯 Practice</button>
+    <button class="nav-tab" data-view="cert">🎓 Certification</button>
+    <button class="nav-tab" data-view="verify">🔍 Verify</button>
+  </div>
+
+  <!-- ADMIN NAV (shown when admin) -->
+  <div class="nav-tabs" id="adminNavTabs" style="display:none;">
+    <button class="nav-tab active" data-view="admin">🛡️ Admin Panel</button>
+    <button class="nav-tab" data-view="practice">🎯 Back to App</button>
+  </div>
+
+  <!-- PRACTICE -->
+  <div id="view-practice">
+    <section class="hero">
+      <h1>Where speed meets intelligence.</h1>
+      <p>The typing test that <b>learns you</b>. Set your own WPM goal and watch yourself hit it.</p>
+      <div class="quote" id="heroQuote"></div>
+    </section>
+
+    <section class="ai-strip">
+      <div class="ai-icon">🧠</div>
+      <div class="ai-text">
+        <div class="ai-label">AI Insight</div>
+        <div id="aiStripText">Loading…</div>
+      </div>
+    </section>
+
+    <section class="goal-card" id="goalCard">
+      <div class="gc-icon">🎯</div>
+      <div>
+        <div class="gc-label">Your WPM goal</div>
+        <div class="gc-sub" id="goalSub">Set a target — we'll track it live</div>
+      </div>
+      <input type="range" id="goalRange" class="gc-slider" min="10" max="200" value="60" step="5" />
+      <div class="gc-value" id="goalValue">60<span class="unit">WPM</span></div>
+      <button class="gc-toggle" id="goalToggle">On</button>
+    </section>
+
+    <section class="journey">
+      <div class="j-card streak"><div class="k">🔥 Streak</div><div class="v" id="jStreak">0</div><div class="sub">days</div></div>
+      <div class="j-card pb"><div class="k">🏆 Best</div><div class="v" id="jPB">0</div><div class="sub">WPM</div></div>
+      <div class="j-card"><div class="k">📈 Trend</div><div class="v" id="jTrend">—</div><div class="sub" id="jTrendSub">vs last week</div></div>
+      <div class="j-card"><div class="k">⌨️ Words</div><div class="v" id="jWords">0</div><div class="sub">lifetime</div></div>
+    </section>
+
+    <section class="heatmap">
+      <div class="heatmap-head">📅 Last 30 days</div>
+      <div class="heatmap-grid" id="heatmapGrid"></div>
+    </section>
+
+    <div class="controls">
+      <div class="group">
+        <span class="label">Time</span>
+        <button class="pill active" data-time="15">15s</button>
+        <button class="pill" data-time="30">30s</button>
+        <button class="pill" data-time="60">60s</button>
+        <button class="pill" data-time="120">120s</button>
+        <input class="custom-time" id="customTime" type="number" min="5" max="600" placeholder="custom" />
+      </div>
+      <div class="group">
+        <span class="label">Mode</span>
+        <button class="pill active" data-mode="words">Words</button>
+        <button class="pill" data-mode="quotes">Quotes</button>
+        <button class="pill" data-mode="code">Code</button>
+        <button class="pill" data-mode="numbers">Numbers</button>
+        <button class="pill ai-pill" data-mode="adaptive">🧠 Adaptive</button>
+      </div>
+      <div class="group">
+        <span class="label">Level</span>
+        <button class="pill active" data-diff="easy">Easy</button>
+        <button class="pill" data-diff="medium">Medium</button>
+        <button class="pill" data-diff="hard">Hard</button>
+        <button class="pill" data-diff="expert">Expert</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="stats">
+        <div class="item"><span class="k">Time</span><span class="big" id="statTime">15</span></div>
+        <div class="item"><span class="k">WPM</span><span class="big" id="statWpm">0</span></div>
+        <div class="item"><span class="k">Goal</span><span class="big" id="statGoal" style="color:var(--gold)">—</span></div>
+        <div class="item"><span class="k">Accuracy</span><span class="big" id="statAcc">100%</span></div>
+        <div class="item"><span class="k">Errors</span><span class="big" id="statErr">0</span></div>
+        <div class="progress" id="progressBarWrap">
+          <div id="progressBar"></div>
+          <div class="goal-marker" id="goalMarker"></div>
+        </div>
+        <div class="rhythm" id="rhythmDot"></div>
+      </div>
+
+      <div class="text-viewport">
+        <div class="text-area" id="textArea" tabindex="0">
+          <div class="words" id="wordsWrap"></div>
+          <div class="caret idle" id="caret"></div>
+        </div>
+        <div class="overlay show" id="overlay">
+          <span class="hint"><span class="pulse-dot"></span> Start typing to begin…</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn" id="restartBtn">↻ Restart</button>
+        <button class="btn primary" id="newBtn">✨ New Text</button>
+        <button class="btn ai" id="coachInlineBtn">🤖 Ask Coach</button>
+      </div>
+    </div>
+
+    <div class="card results" id="results">
+      <div class="goal-result" id="goalResult" style="display:none;">
+        <div class="gr-icon" id="grIcon">🎯</div>
+        <div class="gr-text">
+          <div class="gr-title" id="grTitle">Goal</div>
+          <div class="gr-sub" id="grSub"></div>
+          <div class="gr-bar"><div class="gr-fill" id="grFill" style="width:0%"></div><div class="gr-goal-marker"></div></div>
+        </div>
+      </div>
+      <div class="motivation">
+        <div class="mot-emoji" id="motEmoji">🌟</div>
+        <div class="mot-text">
+          <h3 id="motTitle">Nice work!</h3>
+          <p id="motMsg"></p>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="metric"><div class="k">WPM</div><div class="v" id="rWpm">0</div></div>
+        <div class="metric goal-metric"><div class="k">Goal</div><div class="v" id="rGoal">—</div><div class="sub" id="rGoalSub">your target</div></div>
+        <div class="metric"><div class="k">Accuracy</div><div class="v" id="rAcc">0%</div></div>
+        <div class="metric"><div class="k">Raw WPM</div><div class="v" id="rRaw">0</div></div>
+        <div class="metric ai-metric"><div class="k">Flow Score</div><div class="v" id="rFlow">0</div></div>
+        <div class="metric"><div class="k">Consistency</div><div class="v" id="rCons">0%</div></div>
+      </div>
+      <div class="section-title">Speed over time</div>
+      <div class="chart-wrap"><canvas id="wpmChart"></canvas></div>
+      <div class="section-title">🧠 Weak keys</div>
+      <div class="weak-keys" id="weakKeys"></div>
+      <div class="section-title">Coaching</div>
+      <div class="tips" id="tips"></div>
+      <div class="row">
+        <button class="btn primary" id="againBtn">↻ Try Again</button>
+        <button class="btn" id="shareBtn">📋 Copy Result</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CERTIFICATION -->
+  <div id="view-cert" class="cert-section">
+    <div class="cert-hero">
+      <div class="badge-big">⭐ Pro Feature</div>
+      <h2>Get Certified in Typing</h2>
+      <p>Earn a verifiable certificate. Relaxed difficulty — perfect for building confidence.</p>
+    </div>
+
+    <div id="myCerts"></div>
+
+    <h3 style="font-size:13px;font-weight:800;letter-spacing:.5px;margin:18px 0 10px;color:var(--dim);text-transform:uppercase;">Choose a preset tier</h3>
+    <div class="tier-grid" id="tierGrid"></div>
+
+    <div class="custom-wpm">
+      <div class="cw-label">Or set a custom target<span class="sub">20 – 200 WPM</span></div>
+      <input type="range" id="customWpmRange" min="20" max="200" value="60" step="5" />
+      <div class="cw-value" id="customWpmValue">60<span class="unit">WPM</span></div>
+    </div>
+
+    <div class="exam-rules">
+      <h3>📋 Exam rules <span class="easy-tag">Easy Mode</span></h3>
+      <ul>
+        <li><b>Duration:</b> <span id="ruleDur">5 minutes</span> continuous typing</li>
+        <li><b>Pass criteria:</b> Hit your target WPM + ≥<span id="ruleAcc">90%</span> accuracy + ≥<span id="ruleCons">60%</span> consistency</li>
+        <li><b>Backspace:</b> <span id="ruleBs">Allowed</span> — fix mistakes as you go</li>
+        <li><b>Verifiable:</b> Every certificate gets a unique ID you can share</li>
+      </ul>
+    </div>
+
+    <div class="row">
+      <button class="btn gold" id="startExamBtn">🎓 Start Certification Exam</button>
+    </div>
+  </div>
+
+  <!-- VERIFY -->
+  <div id="view-verify" class="cert-section">
+    <div class="cert-hero">
+      <div class="badge-big">🔍 Public</div>
+      <h2>Verify a Certificate</h2>
+      <p>Enter a certificate ID to check authenticity.</p>
+    </div>
+    <div class="card" style="max-width:600px;margin:0 auto;">
+      <input type="text" id="verifyInput" placeholder="TF-XXXX-XXXX" style="width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:14px;border-radius:11px;font-size:14px;font-family:'JetBrains Mono',monospace;text-align:center;font-weight:700;letter-spacing:1px;outline:none;margin-bottom:12px;text-transform:uppercase;" />
+      <button class="btn primary" id="verifyBtn" style="width:100%;justify-content:center;">🔍 Verify Certificate</button>
+      <div id="verifyResult" style="margin-top:16px;"></div>
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div id="view-admin" class="admin-section">
+    <div class="cert-hero">
+      <div class="badge-big" style="background:linear-gradient(135deg,#dc2626,#7c3aed);color:#fff;">🛡️ Admin</div>
+      <h2>Exam Configuration</h2>
+      <p>Adjust the difficulty of the certification exam. Changes apply immediately to the next exam.</p>
+    </div>
+
+    <div class="admin-panel">
+      <h3>🎯 Master settings <span class="pill">LIVE</span></h3>
+      <div class="admin-row">
+        <div>
+          <div class="ar-label">Easy mode</div>
+          <div class="ar-sub">When on, uses relaxed defaults (recommended for launch)</div>
+        </div>
+        <div class="ar-control">
+          <label class="toggle-switch">
+            <input type="checkbox" id="adminEasyMode" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      <div class="admin-row">
+        <div>
+          <div class="ar-label">Exam duration</div>
+          <div class="ar-sub">Length of the typing exam (minutes)</div>
+        </div>
+        <div class="ar-control">
+          <input type="number" id="adminDuration" min="1" max="10" step="1" />
+          <span style="color:var(--dim);font-size:12.5px;">min</span>
+        </div>
+      </div>
+      <div class="admin-row">
+        <div>
+          <div class="ar-label">Required accuracy</div>
+          <div class="ar-sub">Minimum accuracy to pass (%)</div>
+        </div>
+        <div class="ar-control">
+          <input type="range" id="adminAccRange" min="70" max="100" step="1" />
+          <span class="ar-value" id="adminAccValue">90%</span>
+        </div>
+      </div>
+      <div class="admin-row">
+        <div>
+          <div class="ar-label">Required consistency</div>
+          <div class="ar-sub">Minimum rhythm stability to pass (%)</div>
+        </div>
+        <div class="ar-control">
+          <input type="range" id="adminConsRange" min="40" max="100" step="1" />
+          <span class="ar-value" id="adminConsValue">60%</span>
+        </div>
+      </div>
+      <div class="admin-row">
+        <div>
+          <div class="ar-label">Allow backspace</div>
+          <div class="ar-sub">Let users correct mistakes during exam</div>
+        </div>
+        <div class="ar-control">
+          <label class="toggle-switch">
+            <input type="checkbox" id="adminBackspace" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      <div class="admin-row">
+        <div>
+          <div class="ar-label">Word difficulty in exam</div>
+          <div class="ar-sub">Which word bank the exam pulls from</div>
+        </div>
+        <div class="ar-control">
+          <select id="adminWordDiff" style="background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:9px;font-size:13px;outline:none;font-family:inherit;font-weight:600;">
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-panel">
+      <h3>⚙️ Actions</h3>
+      <div class="admin-row">
+        <div>
+          <div class="ar-label">Reset to recommended defaults</div>
+          <div class="ar-sub">Restores Easy Mode settings</div>
+        </div>
+        <button class="btn" id="adminResetBtn">Reset</button>
+      </div>
+      <div class="admin-row">
+        <div>
+          <div class="ar-label">Clear local data</div>
+          <div class="ar-sub">Wipes all user progress, certificates, invoices</div>
+        </div>
+        <button class="btn danger" id="adminWipeBtn">Wipe Everything</button>
+      </div>
+      <div class="admin-row">
+        <div>
+          <div class="ar-label">Lock admin mode</div>
+          <div class="ar-sub">Exit and hide the admin pill</div>
+        </div>
+        <button class="btn ghost" id="adminLockBtn">🔒 Lock</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div>Made with ❤️ and 🧠</div>
+    <span class="privacy-note">🔒 Your data stays on this device.</span>
+  </footer>
+</div>
+
+<!-- EXAM OVERLAY -->
+<div id="examMode" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:600;overflow-y:auto;padding:24px;">
+  <div style="max-width:1000px;margin:30px auto;">
+    <div class="card" style="background:var(--panel);">
+      <div class="exam-banner">
+        <div class="rec-dot"></div>
+        <span>🔴 EXAM IN PROGRESS</span>
+        <span class="timer" id="examTimer">5:00</span>
+      </div>
+      <div class="exam-target-info">
+        🎯 Target: <span class="big" id="examTarget">60 WPM</span>
+        <span style="margin-left:auto;font-size:11.5px;color:var(--dim);">Need ≥<span id="examNeedAcc">90</span>% acc · ≥<span id="examNeedCons">60</span>% cons</span>
+      </div>
+      <div class="exam-live-status" id="examLiveStatus">
+        <span class="els-item" id="elsSpeed"><span class="status-dot"></span>Speed</span>
+        <span class="els-item" id="elsAcc"><span class="status-dot"></span>Accuracy</span>
+        <span class="els-item" id="elsCons"><span class="status-dot"></span>Consistency</span>
+      </div>
+      <div class="stats">
+        <div class="item"><span class="k">WPM</span><span class="big" id="examWpm">0</span></div>
+        <div class="item"><span class="k">Accuracy</span><span class="big" id="examAcc">100%</span></div>
+        <div class="item"><span class="k">Errors</span><span class="big" id="examErrors">0</span></div>
+        <div class="progress"><div id="examProgress" style="width:0%"></div></div>
+      </div>
+      <div class="text-viewport">
+        <div class="text-area" id="examTextArea" tabindex="0">
+          <div class="words" id="examWordsWrap"></div>
+          <div class="caret idle" id="examCaret"></div>
+        </div>
+        <div class="overlay show" id="examOverlay">
+          <span class="hint"><span class="pulse-dot"></span> Click here, then type. Good luck!</span>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn ghost" id="examAbortBtn">Abort Exam</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAME MODAL -->
+<div class="modal" id="nameModal">
+  <div class="modal-card">
+    <div class="modal-emoji">👋</div>
+    <h2>Welcome to TypeFlow AI</h2>
+    <p>Your name will appear on certificates. Stays private on this device.</p>
+    <input id="nameInput" type="text" placeholder="Your name" maxlength="40" />
+    <div class="modal-actions"><button class="btn primary" id="nameSave">Continue →</button></div>
+    <button class="modal-skip" id="nameSkip">Skip for now</button>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div class="modal" id="adminLoginModal">
+  <div class="modal-card" style="max-width:400px;">
+    <div class="modal-emoji">🛡️</div>
+    <h2>Admin Access</h2>
+    <p>Enter the admin password to unlock exam configuration. Client-side demo admin · not secure for production</p>
+    <input id="adminPassInput" type="text" placeholder="Password" />
+    <div class="modal-actions">
+      <button class="btn ghost" id="adminLoginCancel">Cancel</button>
+      <button class="btn primary" id="adminLoginConfirm">Unlock</button>
+    </div>
+    <div id="adminLoginError" style="color:var(--bad);font-size:12px;margin-top:10px;display:none;font-weight:600;">❌ Incorrect password</div>
+  </div>
+</div>
+
+<!-- SUB MODAL -->
+<div class="modal" id="subModal">
+  <div class="modal-card" style="max-width:680px;">
+    <div class="modal-emoji">⭐</div>
+    <h2>Unlock TypeFlow Pro</h2>
+    <p>Get certified, unlock advanced AI features. Cancel anytime.</p>
+    <div class="plans">
+      <div class="plan" data-plan="monthly" data-price="4.99">
+        <h4>Monthly</h4>
+        <div class="price">$4.99</div>
+        <div class="period">per month</div>
+        <ul>
+          <li>Unlimited certification exams</li>
+          <li>Verifiable certificates</li>
+          <li>Advanced AI analysis</li>
+          <li>Invoice history</li>
+        </ul>
+      </div>
+      <div class="plan featured" data-plan="yearly" data-price="29">
+        <h4>Yearly</h4>
+        <div class="price">$29</div>
+        <div class="period">per year — save 52%</div>
+        <ul>
+          <li>Everything in Monthly</li>
+          <li>2 months free</li>
+          <li>Founder badge</li>
+          <li>Priority support</li>
+        </ul>
+      </div>
+    </div>
+    <button class="modal-skip" id="subCancel">Maybe later</button>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal" id="checkoutModal">
+  <div class="modal-card" style="max-width:480px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="text-align:left;">
+        <h2 style="font-size:18px;margin:0;">Secure checkout</h2>
+        <p style="font-size:12px;margin-top:3px;">TypeFlow Pro — <span id="coPlanName">Yearly</span></p>
+      </div>
+      <div style="font-size:26px;">🔒</div>
+    </div>
+
+    <div class="test-hint">
+      🧪 <b>Demo checkout</b> — no real charge or payment is processed. Try test card:
+      <button id="fillTestCard">Fill 4242…</button>
+    </div>
+
+    <div class="checkout-form">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="coEmail" placeholder="you@example.com" />
+      </div>
+
+      <div class="form-group">
+        <label>Card number</label>
+        <div class="card-input-wrap">
+          <input type="text" id="coCard" inputmode="numeric" placeholder="4242 4242 4242 4242" maxlength="23" />
+          <div class="card-brand" id="coCardBrand"></div>
+        </div>
+        <div class="field-error" id="coCardError">Enter a valid card number</div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Expiry</label>
+          <input type="text" id="coExpiry" inputmode="numeric" placeholder="MM/YY" maxlength="5" style="background:var(--panel2);border:1.5px solid var(--border);color:var(--text);padding:13px 15px;border-radius:11px;font-size:14px;font-family:'JetBrains Mono',monospace;outline:none;width:100%;font-weight:600;letter-spacing:1px;" />
+          <div class="field-error" id="coExpiryError">Expired or invalid</div>
+        </div>
+        <div class="form-group">
+          <label>CVC</label>
+          <input type="text" id="coCvc" inputmode="numeric" placeholder="123" maxlength="4" style="background:var(--panel2);border:1.5px solid var(--border);color:var(--text);padding:13px 15px;border-radius:11px;font-size:14px;font-family:'JetBrains Mono',monospace;outline:none;width:100%;font-weight:600;letter-spacing:1px;" />
+          <div class="field-error" id="coCvcError">3–4 digits</div>
+        </div>
+      </div>
+
+      <div class="summary-box">
+        <div class="srow"><span>Subtotal</span><span id="coSubtotal">$29.00</span></div>
+        <div class="srow"><span>Tax</span><span id="coTax">$0.00</span></div>
+        <div class="srow"><span>Total due today</span><span id="coTotal">$29.00</span></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn ghost" id="coCancel">Cancel</button>
+        <button class="btn gold" id="coPayBtn" style="flex:2;">🔒 Pay $29.00</button>
+      </div>
+
+      <div class="secure-note">🔒 256-bit SSL · PCI compliant</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESSING MODAL -->
+<div class="modal" id="processingModal">
+  <div class="modal-card" style="max-width:400px;">
+    <div class="processing-view">
+      <div class="processing-spinner"></div>
+      <h3>Processing your payment…</h3>
+      <p id="processingSub">Please don't close this window</p>
+      <div class="processing-steps">
+        <div class="step active" id="ps1"><div class="check">1</div> Validating card…</div>
+        <div class="step" id="ps2"><div class="check">2</div> Authorizing payment…</div>
+        <div class="step" id="ps3"><div class="check">3</div> Activating Pro…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal" id="successModal">
+  <div class="modal-card" style="max-width:460px;">
+    <div class="success-check">✓</div>
+    <h2>Payment successful</h2>
+    <p>Welcome to TypeFlow Pro! Your account is now active.</p>
+
+    <div class="receipt">
+      <div class="rrow"><span class="k">Transaction ID</span><span class="v" id="rcvTxn">txn_xxx</span></div>
+      <div class="rrow"><span class="k">Plan</span><span class="v" id="rcvPlan">Yearly</span></div>
+      <div class="rrow"><span class="k">Card</span><span class="v" id="rcvCard">•••• 4242</span></div>
+      <div class="rrow"><span class="k">Date</span><span class="v" id="rcvDate">—</span></div>
+      <div class="rtotal"><span>Charged</span><span class="v" id="rcvAmount">$29.00</span></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn" id="rcvDownloadBtn">📄 Invoice PDF</button>
+      <button class="btn primary" id="rcvDoneBtn" style="flex:1;">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- DECLINE MODAL -->
+<div class="modal" id="declineModal">
+  <div class="modal-card" style="max-width:400px;">
+    <div class="modal-emoji" style="font-size:52px;">❌</div>
+    <h2>Payment declined</h2>
+    <p>This is a demo checkout. No real payment was processed.</p>
+    <div class="modal-actions">
+      <button class="btn primary" id="declineRetryBtn" style="flex:1;">Try Again</button>
+      <button class="btn ghost" id="declineCancelBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- BILLING MODAL -->
+<div class="modal" id="billingModal">
+  <div class="modal-card" style="max-width:520px;">
+    <div class="modal-emoji">💳</div>
+    <h2>Billing & Invoices</h2>
+    <p>Manage your subscription and view past invoices.</p>
+    <div id="invoicesList" style="text-align:left;max-height:400px;overflow-y:auto;"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="billingCloseBtn" style="flex:1;">Close</button>
+      <button class="btn danger" id="billingCancelBtn">Cancel subscription</button>
+    </div>
+  </div>
+</div>
+
+<!-- CERT MODAL -->
+<div class="modal cert-modal" id="certModal">
+  <div class="modal-card">
+    <div class="certificate">
+      <div class="cert-content">
+        <div class="cert-head">
+          <div class="cert-brand">
+            <div class="cert-brand-mark">T</div>
+            <div>
+              <div class="cert-brand-name">TypeFlow AI</div>
+              <div class="cert-brand-sub">Certificate of Proficiency</div>
+            </div>
+          </div>
+          <div class="cert-id">ID<b id="certId">TF-XXXX-XXXX</b></div>
+        </div>
+        <div class="cert-title">This certifies that</div>
+        <div style="text-align:center;"><div class="cert-name" id="certName">—</div></div>
+        <div class="cert-subtitle">completed the TypeFlow Certification Exam<br>achieving <b id="certTierName">Gold</b> tier on <b id="certDate">—</b></div>
+        <div class="cert-stats">
+          <div class="cert-stat"><div class="k">Speed</div><div class="v" id="certWpm">0<span class="unit">WPM</span></div></div>
+          <div class="cert-stat"><div class="k">Target</div><div class="v" id="certTargetV">0<span class="unit">WPM</span></div></div>
+          <div class="cert-stat"><div class="k">Accuracy</div><div class="v" id="certAcc">0<span class="unit">%</span></div></div>
+          <div class="cert-stat"><div class="k">Consistency</div><div class="v" id="certCons">0<span class="unit">%</span></div></div>
+        </div>
+        <div style="text-align:center;margin-top:12px;"><div class="cert-tier" id="certTier">⭐ GOLD</div></div>
+        <div class="cert-verify">Verify locally at this TypeFlow AI installation · ID <b id="certVerifyId">TF-XXXX</b></div>
+      </div>
+    </div>
+    <div class="cert-actions">
+      <button class="btn primary" id="certPrintBtn">🖨️ Print / PDF</button>
+      <button class="btn" id="certCopyBtn">📋 Copy Link</button>
+      <button class="btn ghost" id="certCloseBtn">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- COACH -->
+<div class="coach-backdrop" id="coachBackdrop"></div>
+<aside class="coach-panel" id="coachPanel">
+  <div class="coach-head">
+    <div class="ch-avatar">🤖</div>
+    <div class="ch-info">
+      <div class="ch-name">AI Coach <span class="ai-chip"><span class="dot"></span>Local</span></div>
+      <div class="ch-status">Ready</div>
+    </div>
+    <button class="coach-close" id="coachClose">✕</button>
+  </div>
+  <div class="coach-body" id="coachBody"></div>
+  <div class="coach-input">
+    <input id="coachInput" type="text" placeholder="Ask me anything…" />
+    <button id="coachSend">➤</button>
+  </div>
+</aside>
+
+<div class="toast" id="toast">
+  <span class="t-emoji" id="toastEmoji">🏆</span>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+"use strict";
+
+/* ==========================================================
+   BANKS
+   ========================================================== */
+const WORD_BANK = {
+  easy: "the and for you that with have this from they will one all would there their what about which when make like time just know take people into year your good some could them see other than then now look only come its over think also back after use two how our work first well way even new want because any these give day most us".split(" "),
+  medium: "algorithm beautiful circumstance development environment fascinating generation hypothesis interesting javascript knowledge lighthouse magnificent necessary opportunity perspective qualitative remarkable sophisticated technology understand vulnerability wonderful experience performance architecture community celebration determine foundation important journey landscape mountain navigate obvious patience quantum rhythm strategy tradition ultimate velocity wilderness".split(" "),
+  hard: "ubiquitous quintessential juxtaposition idiosyncrasy conscientious bureaucracy phenomenon equilibrium miscellaneous onomatopoeia philosophical acquaintance questionnaire rhododendron synchronization conscientiousness disproportionately acknowledgement perpendicular susceptibility enthusiastically intelligible pronunciation territoriality vulnerability hypothetical".split(" "),
+  expert: "sesquipedalian antidisestablishmentarianism pneumonoultramicroscopicsilicovolcanoconiosis floccinaucinihilipilification honorificabilitudinitatibus thyroparathyroidectomized incomprehensibilities counterrevolutionaries electroencephalographically interdependency".split(" ")
+};
+const QUOTES_TEXT = [
+  "The only way to do great work is to love what you do. If you have not found it yet, keep looking. Do not settle.",
+  "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+  "In the middle of every difficulty lies opportunity, waiting patiently to be discovered.",
+  "The future belongs to those who believe in the beauty of their dreams and work toward them daily.",
+  "Simplicity is the ultimate sophistication, and clarity of thought is the beginning of wisdom.",
+  "Programs must be written for people to read, and only incidentally for machines to execute.",
+  "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+  "Talk is cheap. Show me the code, and I will show you the truth of your understanding."
+];
+const CODE_LINES = [
+  "const sum = arr.reduce((a, b) => a + b, 0);",
+  "function greet(name) { return `Hello, ${name}!`; }",
+  "if (x > 0 && y < 10) { console.log('in range'); }",
+  "const users = data.filter(u => u.active).map(u => u.name);",
+  "async function fetchData(url) { const r = await fetch(url); return r.json(); }",
+  "for (let i = 0; i < items.length; i++) { process(items[i]); }"
+];
+const HERO_QUOTES = [
+  "Speed is a side effect of accuracy.",
+  "Your keyboard is a musical instrument.",
+  "Slow is smooth. Smooth is fast.",
+  "Flow is earned, not forced.",
+  "Practice doesn't make perfect — it makes permanent.",
+  "Consistency beats intensity. Every single time.",
+  "Focus is the new IQ.",
+  "Your only competition is yesterday's you.",
+  "Rhythm > speed.",
+  "Come for the test. Stay for the flow."
+];
+const MILESTONES = [
+  { wpm: 20,  badge: "🌱", label: "Getting Started" },
+  { wpm: 30,  badge: "🚶", label: "Beginner" },
+  { wpm: 40,  badge: "🏃", label: "Intermediate" },
+  { wpm: 55,  badge: "⚡", label: "Fast" },
+  { wpm: 70,  badge: "🔥", label: "Very Fast" },
+  { wpm: 90,  badge: "💨", label: "Pro" },
+  { wpm: 110, badge: "🚀", label: "Elite" },
+  { wpm: 130, badge: "👑", label: "Legend" }
+];
+const ACCENT_THEMES = ["cosmos", "zen", "ember", "aurora", "mono"];
+const CERT_TIERS = [
+  { id: "bronze",   icon: "🥉", name: "Bronze",   wpm: 30,  acc: 85, cons: 55 },
+  { id: "silver",   icon: "🥈", name: "Silver",   wpm: 45,  acc: 88, cons: 58 },
+  { id: "gold",     icon: "🥇", name: "Gold",     wpm: 60,  acc: 90, cons: 60 },
+  { id: "platinum", icon: "💎", name: "Platinum", wpm: 80,  acc: 92, cons: 65 },
+  { id: "diamond",  icon: "👑", name: "Diamond",  wpm: 100, acc: 94, cons: 70 }
+];
+
+/* ==========================================================
+   ADMIN CONFIG (persisted)
+   ========================================================== */
+const ADMIN_KEY = "typeflow_admin_v1";
+const ADMIN_PASSWORD = "admin123";
+const DEFAULT_ADMIN_CONFIG = {
+  easyMode: true,
+  duration: 5,       // minutes
+  acc: 90,           // required accuracy %
+  cons: 60,          // required consistency %
+  backspace: true,
+  wordDiff: "medium"
+};
+
+function loadAdminConfig() {
+  try {
+    const raw = localStorage.getItem(ADMIN_KEY);
+    if (!raw) return { ...DEFAULT_ADMIN_CONFIG };
+    return { ...DEFAULT_ADMIN_CONFIG, ...JSON.parse(raw) };
+  } catch { return { ...DEFAULT_ADMIN_CONFIG }; }
+}
+function saveAdminConfig(c) {
+  try { localStorage.setItem(ADMIN_KEY, JSON.stringify(c)); } catch {}
+}
+let adminConfig = loadAdminConfig();
+let isAdmin = false;
+
+/* ==========================================================
+   STATE
+   ========================================================== */
+const state = {
+  time: 15, mode: "words", diff: "easy",
+  text: "", words: [], charSpans: [], typedWords: [],
+  currentWord: 0, currentChar: 0,
+  started: false, finished: false, startTime: 0,
+  timerId: null, uiTimerId: null,
+  correctChars: 0, incorrectChars: 0, totalTyped: 0, mistakes: 0,
+  wpmHistory: [], lineHeight: 44, lastScrollY: 0,
+  accentIdx: 0, keyErrors: {},
+  goalEnabled: true, goalWpm: 60,
+  examState: null, selectedTier: "gold",
+  certTarget: 60, certTargetTier: null
+};
+
+const $ = id => document.getElementById(id);
+const el = {
+  textArea: $("textArea"), wordsWrap: $("wordsWrap"), caret: $("caret"),
+  overlay: $("overlay"), statTime: $("statTime"), statWpm: $("statWpm"),
+  statGoal: $("statGoal"), statAcc: $("statAcc"), statErr: $("statErr"),
+  progressBar: $("progressBar"), progressBarWrap: $("progressBarWrap"),
+  goalMarker: $("goalMarker"),
+  results: $("results"), themeBtn: $("themeBtn"), accentBtn: $("accentBtn"),
+  rhythmDot: $("rhythmDot"), toast: $("toast"), toastEmoji: $("toastEmoji"),
+  toastMsg: $("toastMsg"), greeting: $("greeting"), proBadge: $("proBadge"),
+  adminPill: $("adminPill"),
+  aiStripText: $("aiStripText"), coachPanel: $("coachPanel"),
+  coachBackdrop: $("coachBackdrop"), coachBody: $("coachBody"), coachInput: $("coachInput"),
+  goalCard: $("goalCard"), goalRange: $("goalRange"), goalValue: $("goalValue"),
+  goalToggle: $("goalToggle")
+};
+
+/* ==========================================================
+   USER
+   ========================================================== */
+const USER_KEY = "typeflow_v5";
+function defaultUser() {
+  return {
+    id: "u_" + Math.random().toString(36).slice(2, 10),
+    name: "", createdAt: Date.now(),
+    streak: 0, lastDay: null, tests: 0, words: 0, bestWpm: 0,
+    days: {}, milestones: [], theme: "dark", accent: "cosmos",
+    keyStats: {}, history: [],
+    isPro: false, plan: null, proSince: null, certificates: [],
+    invoices: [],
+    goalEnabled: true, goalWpm: 60, goalsHit: 0, goalsMissed: 0
+  };
+}
+function loadUser() {
+  try {
+    const raw = localStorage.getItem(USER_KEY);
+    if (!raw) return null;
+    return Object.assign(defaultUser(), JSON.parse(raw));
+  } catch { return null; }
+}
+function saveUser(u) { try { localStorage.setItem(USER_KEY, JSON.stringify(u)); } catch {} }
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+function dateKeyOffset(n) {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+let user = loadUser();
+
+/* ==========================================================
+   HELPERS
+   ========================================================== */
+function pickRandom(arr, n) {
+  const out = [];
+  for (let i = 0; i < n; i++) out.push(arr[(Math.random() * arr.length) | 0]);
+  return out;
+}
+function generateFromBank(bank, time) {
+  const count = Math.ceil((time / 60) * 45) + 20;
+  const words = [];
+  for (let i = 0; i < count; i++) words.push(bank[(Math.random() * bank.length) | 0]);
+  return words.join(" ");
+}
+
+/* ==========================================================
+   AI
+   ========================================================== */
+function analyzeWeakKeys() {
+  if (!user || !user.keyStats) return [];
+  return Object.entries(user.keyStats)
+    .filter(([, v]) => v.total >= 5)
+    .map(([k, v]) => ({ key: k, errorRate: v.errors / v.total }))
+    .filter(x => x.errorRate > 0.08)
+    .sort((a, b) => b.errorRate - a.errorRate)
+    .slice(0, 8);
+}
+function generateAdaptiveText() {
+  const weak = analyzeWeakKeys();
+  const weakChars = weak.map(w => w.key);
+  if (!weakChars.length) return generateFromBank(WORD_BANK.medium, state.time);
+  const allWords = [...WORD_BANK.easy, ...WORD_BANK.medium, ...WORD_BANK.hard];
+  const weakSet = new Set(weakChars);
+  const scored = allWords.map(w => {
+    let s = 0; for (const ch of w) if (weakSet.has(ch)) s++;
+    return { w, s };
+  }).filter(x => x.s > 0).sort((a, b) => b.s - a.s).slice(0, 200).map(x => x.w);
+  const target = Math.ceil((state.time / 60) * 45) + 15;
+  const words = [];
+  for (let i = 0; i < target; i++) {
+    if (Math.random() < 0.6 && scored.length) words.push(scored[(Math.random() * scored.length) | 0]);
+    else {
+      const len = 4 + ((Math.random() * 4) | 0);
+      let w = "";
+      for (let j = 0; j < len; j++) {
+        if (Math.random() < 0.55) w += weakChars[(Math.random() * weakChars.length) | 0];
+        else w += "aeiou"[(Math.random() * 5) | 0];
+      }
+      words.push(w);
+    }
+  }
+  return words.join(" ");
+}
+
+/* ==========================================================
+   TEXT GEN
+   ========================================================== */
+function generateText() {
+  const { mode, diff, time } = state;
+  if (mode === "adaptive") return generateAdaptiveText();
+  if (mode === "quotes") return QUOTES_TEXT[(Math.random() * QUOTES_TEXT.length) | 0];
+  if (mode === "code") {
+    const n = Math.min(CODE_LINES.length, Math.max(2, Math.ceil(time / 20)));
+    return pickRandom(CODE_LINES, n).join(" ");
+  }
+  if (mode === "numbers") {
+    const count = Math.ceil(time * 2.2);
+    const nums = [];
+    for (let i = 0; i < count; i++) {
+      const len = diff === "easy" ? 2 : diff === "medium" ? 3 : diff === "hard" ? 4 : 6;
+      let s = "";
+      for (let j = 0; j < len; j++) s += (Math.random() * 10) | 0;
+      nums.push(s);
+    }
+    return nums.join(" ");
+  }
+  return generateFromBank(WORD_BANK[diff], time);
+}
+
+function syncLineHeight() {
+  const v = getComputedStyle(document.documentElement).getPropertyValue("--lh").trim();
+  state.lineHeight = parseFloat(v) || 44;
+}
+
+/* ==========================================================
+   GOAL
+   ========================================================== */
+function updateGoalUI() {
+  el.goalRange.value = state.goalWpm;
+  el.goalValue.innerHTML = `${state.goalWpm}<span class="unit">WPM</span>`;
+  el.statGoal.textContent = state.goalEnabled ? state.goalWpm : "—";
+  el.statGoal.style.color = state.goalEnabled ? "var(--gold)" : "var(--dim)";
+  if (state.goalEnabled) {
+    el.goalCard.classList.remove("off");
+    el.goalToggle.textContent = "On";
+    el.progressBarWrap.classList.add("has-goal");
+    el.goalMarker.style.left = Math.min(100, (state.goalWpm / 150) * 100) + "%";
+  } else {
+    el.goalCard.classList.add("off");
+    el.goalToggle.textContent = "Off";
+    el.progressBarWrap.classList.remove("has-goal");
+  }
+}
+el.goalRange.addEventListener("input", () => {
+  state.goalWpm = parseInt(el.goalRange.value);
+  if (user) { user.goalWpm = state.goalWpm; saveUser(user); }
+  updateGoalUI();
+});
+el.goalToggle.addEventListener("click", () => {
+  state.goalEnabled = !state.goalEnabled;
+  if (user) { user.goalEnabled = state.goalEnabled; saveUser(user); }
+  updateGoalUI();
+  showToast(state.goalEnabled ? "🎯" : "⭕", state.goalEnabled ? `Goal: ${state.goalWpm} WPM` : "Goal off");
+});
+
+/* ==========================================================
+   RENDER
+   ========================================================== */
+function renderText(text) {
+  state.text = text;
+  state.words = text.split(" ");
+  state.typedWords = new Array(state.words.length).fill("");
+  state.currentWord = 0; state.currentChar = 0;
+  state.correctChars = 0; state.incorrectChars = 0;
+  state.totalTyped = 0; state.mistakes = 0;
+  state.wpmHistory = []; state.started = false; state.finished = false;
+  state.startTime = 0; state.lastScrollY = 0; state.keyErrors = {};
+  clearInterval(state.timerId); clearInterval(state.uiTimerId);
+
+  const frag = document.createDocumentFragment();
+  state.charSpans = [];
+  for (let wi = 0; wi < state.words.length; wi++) {
+    const wordEl = document.createElement("span");
+    wordEl.className = "word" + (wi === 0 ? "" : " pending");
+    const spans = [];
+    for (const ch of state.words[wi]) {
+      const s = document.createElement("span");
+      s.className = "char";
+      s.textContent = ch;
+      wordEl.appendChild(s);
+      spans.push(s);
+    }
+    state.charSpans.push(spans);
+    frag.appendChild(wordEl);
+  }
+  el.wordsWrap.textContent = "";
+  el.wordsWrap.appendChild(frag);
+  el.wordsWrap.style.transition = "none";
+  el.wordsWrap.style.transform = "translate3d(0,0,0)";
+  void el.wordsWrap.offsetHeight;
+  el.wordsWrap.style.transition = "";
+
+  el.statTime.textContent = state.time;
+  el.statWpm.textContent = "0";
+  el.statAcc.textContent = "100%";
+  el.statErr.textContent = "0";
+  el.progressBar.style.width = "0%";
+  el.rhythmDot.classList.remove("active");
+
+  el.textArea.classList.add("blurred");
+  el.overlay.classList.add("show");
+  el.overlay.querySelector(".hint").innerHTML = `<span class="pulse-dot"></span> Start typing to begin…`;
+  el.results.classList.remove("show");
+  el.caret.classList.add("idle");
+
+  updateGoalUI();
+  syncLineHeight();
+  requestAnimationFrame(() => updateCaretPosition(true));
+}
+function updateCaretPosition(instant) {
+  const wi = state.currentWord;
+  const ci = state.currentChar;
+  const spans = state.charSpans[wi];
+  if (!spans || !spans.length) {
+    const wordEl = el.wordsWrap.children[wi];
+    if (!wordEl) return;
+    placeCaret(wordEl.offsetLeft, wordEl.offsetTop, instant); return;
+  }
+  if (ci >= spans.length) {
+    const last = spans[spans.length - 1];
+    placeCaret(last.offsetLeft + last.offsetWidth, last.offsetTop, instant); return;
+  }
+  const t = spans[ci];
+  placeCaret(t.offsetLeft, t.offsetTop, instant);
+}
+function placeCaret(x, y, instant) {
+  const lh = state.lineHeight;
+  if (instant) el.caret.style.transition = "none";
+  el.caret.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+  el.caret.style.height = lh + "px";
+  if (instant) { void el.caret.offsetHeight; el.caret.style.transition = ""; }
+}
+function scrollToCurrentLine() {
+  const wordEl = el.wordsWrap.children[state.currentWord];
+  if (!wordEl) return;
+  const lh = state.lineHeight;
+  const line = Math.round(wordEl.offsetTop / lh);
+  const target = Math.max(0, (line - 1) * lh);
+  if (Math.abs(target - state.lastScrollY) < 0.5) return;
+  state.lastScrollY = target;
+  el.wordsWrap.style.transform = `translate3d(0, ${-target}px, 0)`;
+}
+
+/* ==========================================================
+   TYPING
+   ========================================================== */
+function startTest() {
+  state.started = true;
+  state.startTime = performance.now();
+  el.overlay.classList.remove("show");
+  el.textArea.classList.remove("blurred");
+  el.caret.classList.remove("idle");
+  el.rhythmDot.classList.add("active");
+  state.timerId = setInterval(() => {
+    const elapsed = (performance.now() - state.startTime) / 1000;
+    if (elapsed >= state.time) finishTest();
+  }, 50);
+  let lastSec = 0;
+  state.uiTimerId = setInterval(() => {
+    const elapsed = (performance.now() - state.startTime) / 1000;
+    const remaining = Math.max(0, state.time - elapsed);
+    const t = Math.ceil(remaining);
+    if (el.statTime.textContent !== String(t)) el.statTime.textContent = t;
+    el.progressBar.style.width = Math.min(100, (elapsed / state.time) * 100) + "%";
+    const secNow = Math.floor(elapsed);
+    if (secNow > lastSec) { lastSec = secNow; state.wpmHistory.push(calcWpm(elapsed)); }
+    el.statWpm.textContent = calcWpm(elapsed).toFixed(0);
+    el.statAcc.textContent = calcAccuracy().toFixed(1) + "%";
+    el.statErr.textContent = state.incorrectChars;
+  }, 200);
+}
+function calcWpm(sec) { return sec <= 0 ? 0 : (state.correctChars / 5) / (sec / 60); }
+function calcAccuracy() { return state.totalTyped === 0 ? 100 : (state.correctChars / state.totalTyped) * 100; }
+
+function handleKey(e) {
+  if (state.finished) return;
+  const key = e.key;
+  if (key === "Shift" || key === "Control" || key === "Alt" || key === "Meta") return;
+  if (key === "Tab" || key === "Escape") { e.preventDefault(); restart(); return; }
+  if (!state.started) startTest();
+  const wi = state.currentWord;
+  const word = state.words[wi];
+  if (word === undefined) return;
+  const typed = state.typedWords[wi];
+  const spans = state.charSpans[wi];
+  if (key === "Backspace") {
+    e.preventDefault();
+    if (state.currentChar > 0) {
+      const wordEl = el.wordsWrap.children[wi];
+      if (state.currentChar > word.length) {
+        const last = wordEl.lastElementChild;
+        if (last && last.classList.contains("extra")) wordEl.removeChild(last);
+      } else {
+        const span = spans[state.currentChar - 1];
+        if (span) span.classList.remove("correct", "incorrect");
+      }
+      state.currentChar--;
+      state.typedWords[wi] = typed.slice(0, -1);
+      updateCaretPosition();
+    }
+    return;
+  }
+  if (key === " ") {
+    e.preventDefault();
+    if (typed.length === 0) return;
+    el.wordsWrap.children[wi].classList.remove("pending");
+    state.currentWord++; state.currentChar = 0;
+    const next = el.wordsWrap.children[state.currentWord];
+    if (next) next.classList.remove("pending");
+    updateCaretPosition();
+    scrollToCurrentLine();
+    if (state.currentWord >= state.words.length) finishTest();
+    return;
+  }
+  if (key.length !== 1) return;
+  state.totalTyped++;
+  const target = word[state.currentChar];
+  const isCorrect = key === target;
+  if (target) {
+    if (!state.keyErrors[target]) state.keyErrors[target] = { total: 0, errors: 0 };
+    state.keyErrors[target].total++;
+    if (!isCorrect) state.keyErrors[target].errors++;
+  }
+  if (isCorrect) state.correctChars++;
+  else { state.incorrectChars++; state.mistakes++; }
+  const span = spans[state.currentChar];
+  if (span) {
+    span.classList.remove("correct", "incorrect");
+    span.classList.add(isCorrect ? "correct" : "incorrect");
+  } else {
+    const wordEl = el.wordsWrap.children[wi];
+    const s = document.createElement("span");
+    s.className = "char extra";
+    s.textContent = key;
+    wordEl.appendChild(s);
+  }
+  state.typedWords[wi] = typed + key;
+  state.currentChar++;
+  updateCaretPosition();
+}
+
+function finishTest() {
+  if (state.finished) return;
+  state.finished = true;
+  clearInterval(state.timerId); clearInterval(state.uiTimerId);
+  el.textArea.classList.add("blurred");
+  el.caret.classList.add("idle");
+  el.rhythmDot.classList.remove("active");
+  el.overlay.querySelector(".hint").textContent = "✦ Flow complete ✦";
+  el.overlay.classList.add("show");
+
+  const wpm = calcWpm(state.time);
+  const rawWpm = (state.totalTyped / 5) / (state.time / 60);
+  const acc = calcAccuracy();
+  let consistency = 100;
+  if (state.wpmHistory.length > 2) {
+    const mean = state.wpmHistory.reduce((a, b) => a + b, 0) / state.wpmHistory.length;
+    const variance = state.wpmHistory.reduce((a, b) => a + (b - mean) ** 2, 0) / state.wpmHistory.length;
+    const std = Math.sqrt(variance);
+    consistency = Math.max(0, 100 - (std / Math.max(mean, 1)) * 100);
+  }
+  const flowScore = Math.round(
+    Math.min(100, wpm) * 0.35 +
+    Math.max(0, (acc - 70) * (100 / 30)) * 0.35 +
+    consistency * 0.30
+  );
+  const goalHit = state.goalEnabled && wpm >= state.goalWpm;
+
+  if (!user) user = defaultUser();
+  const prevBest = user.bestWpm || 0;
+  const isPB = wpm > prevBest;
+  if (isPB) user.bestWpm = wpm;
+  user.tests = (user.tests || 0) + 1;
+  user.words = (user.words || 0) + Math.round(state.correctChars / 5);
+  if (state.goalEnabled) {
+    if (goalHit) user.goalsHit = (user.goalsHit || 0) + 1;
+    else user.goalsMissed = (user.goalsMissed || 0) + 1;
+  }
+  const today = todayKey();
+  if (user.lastDay !== today) {
+    const yest = dateKeyOffset(1);
+    user.streak = user.lastDay === yest ? (user.streak || 0) + 1 : 1;
+    user.lastDay = today;
+  }
+  if (!user.days) user.days = {};
+  if (!user.days[today]) user.days[today] = { tests: 0, bestWpm: 0 };
+  user.days[today].tests++;
+  if (wpm > user.days[today].bestWpm) user.days[today].bestWpm = wpm;
+  if (!user.keyStats) user.keyStats = {};
+  for (const [k, v] of Object.entries(state.keyErrors)) {
+    if (!user.keyStats[k]) user.keyStats[k] = { total: 0, errors: 0 };
+    user.keyStats[k].total += v.total;
+    user.keyStats[k].errors += v.errors;
+  }
+  if (!user.history) user.history = [];
+  user.history.push({ wpm, acc, ts: Date.now() });
+  if (user.history.length > 100) user.history = user.history.slice(-100);
+  const newMs = MILESTONES.find(m => m.wpm <= user.bestWpm && !user.milestones.includes(m.wpm));
+  if (newMs) {
+    user.milestones.push(newMs.wpm);
+    setTimeout(() => showToast(newMs.badge, `Milestone: ${newMs.label} (${newMs.wpm} WPM)`), 700);
+  }
+  saveUser(user);
+
+  $("rWpm").textContent = wpm.toFixed(0);
+  $("rAcc").textContent = acc.toFixed(1) + "%";
+  $("rRaw").textContent = rawWpm.toFixed(0);
+  $("rFlow").textContent = flowScore;
+  $("rCons").textContent = consistency.toFixed(0) + "%";
+
+  const goalResult = $("goalResult");
+  if (state.goalEnabled) {
+    goalResult.style.display = "flex";
+    goalResult.classList.toggle("hit", goalHit);
+    goalResult.classList.toggle("miss", !goalHit);
+    const gap = wpm - state.goalWpm;
+    $("grFill").style.width = Math.min(100, (wpm / state.goalWpm) * 100) + "%";
+    if (goalHit) {
+      $("grIcon").textContent = "🎯";
+      $("grTitle").textContent = "Goal achieved!";
+      $("grTitle").style.color = "var(--good)";
+      $("grSub").innerHTML = `You hit <b>${wpm.toFixed(0)} WPM</b> — goal was <b>${state.goalWpm}</b>. +${gap.toFixed(0)} over.`;
+    } else {
+      $("grIcon").textContent = "💪";
+      $("grTitle").textContent = "Almost there";
+      $("grTitle").style.color = "var(--warn)";
+      $("grSub").innerHTML = `<b>${wpm.toFixed(0)} WPM</b> — needed <b>${state.goalWpm}</b>. Just <b>${Math.abs(gap).toFixed(0)} WPM</b> short.`;
+    }
+    $("rGoal").textContent = state.goalWpm;
+    $("rGoalSub").textContent = goalHit ? "✓ hit" : `${Math.abs(gap).toFixed(0)} short`;
+  } else {
+    goalResult.style.display = "none";
+    $("rGoal").textContent = "—";
+    $("rGoalSub").textContent = "not set";
+  }
+
+  buildMotivation(wpm, acc, consistency, isPB, prevBest, flowScore, goalHit);
+  drawChart();
+  buildTips(wpm, acc, consistency);
+  buildWeakKeys();
+  renderJourney();
+  renderGreeting();
+  renderAIStrip();
+  updateProUI();
+
+  el.results.classList.add("show");
+  setTimeout(() => el.results.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+
+  if (state.goalEnabled && goalHit && !isPB) { showToast("🎯", `Goal hit! ${wpm.toFixed(0)} WPM`); playChime(); }
+  else if (isPB) { showToast("🏆", `New personal best: ${wpm.toFixed(0)} WPM!`); playChime(); }
+  else if (consistency > 85 && wpm > 30) showToast("🎵", "Beautiful rhythm!");
+}
+
+function buildMotivation(wpm, acc, consistency, isPB, prevBest, flowScore, goalHit) {
+  const name = user && user.name ? user.name + ", " : "";
+  const mot = document.querySelector(".motivation");
+  mot.classList.remove("goal-hit", "goal-miss");
+  let t = "Nice work!", m = "", e = "🌟";
+  if (goalHit && !isPB) { e = "🎯"; t = "You hit your goal!"; m = `${name}<b>${wpm.toFixed(0)} WPM</b> — exactly what you aimed for.`; mot.classList.add("goal-hit"); }
+  else if (isPB) { e = "🏆"; t = "Personal best!"; m = `${name}beat your previous record of <b>${prevBest.toFixed(0)} WPM</b>.`; mot.classList.add("goal-hit"); }
+  else if (wpm >= 90) { e = "🚀"; t = "You're flying."; m = `<b>${wpm.toFixed(0)} WPM</b> is faster than 99% of people.`; }
+  else if (wpm >= 70) { e = "🔥"; t = "You're on fire."; m = `<b>${wpm.toFixed(0)} WPM</b> puts you in the top 5%.`; }
+  else if (wpm >= 50) { e = "⚡"; t = "Strong work."; m = `<b>${wpm.toFixed(0)} WPM</b> is above average.`; }
+  else if (wpm >= 35) { e = "💪"; t = "Building momentum."; m = `<b>${wpm.toFixed(0)} WPM</b> is solid.`; }
+  else { e = "🌱"; t = "You showed up."; m = `Every fast typist started here.`; }
+  if (state.goalEnabled && !goalHit && wpm < state.goalWpm) mot.classList.add("goal-miss");
+  if (flowScore >= 80) m += " You were <b>in the zone</b>.";
+  $("motTitle").textContent = t;
+  $("motMsg").innerHTML = m;
+  $("motEmoji").textContent = e;
+}
+function buildTips(wpm, acc, consistency) {
+  const tips = [];
+  if (state.goalEnabled && wpm < state.goalWpm) tips.push({ icon: "🎯", cls: "warn", text: `You're <b>${Math.abs(wpm - state.goalWpm).toFixed(0)} WPM</b> from your goal. Try 30-second sessions.` });
+  if (acc < 85) tips.push({ icon: "🎯", cls: "bad", text: `Accuracy is <b>${acc.toFixed(1)}%</b>. Slow down and aim for 97%.` });
+  else if (acc < 95) tips.push({ icon: "⚖️", cls: "warn", text: `Accuracy is <b>${acc.toFixed(1)}%</b>. Reduce speed ~10%.` });
+  else tips.push({ icon: "✅", cls: "good", text: `Excellent accuracy at <b>${acc.toFixed(1)}%</b>.` });
+  if (wpm < 30) tips.push({ icon: "🐢", text: "Touch typing: keep fingers on home row." });
+  else if (wpm < 50) tips.push({ icon: "🚶", text: "Practice <b>bigrams</b> (th, he, in, er, an)." });
+  else if (wpm < 80) tips.push({ icon: "🏃", cls: "good", text: "Practice 10-second bursts at max speed." });
+  else tips.push({ icon: "🚀", cls: "good", text: "Top tier. Chase <b>consistency</b> next." });
+  if (consistency < 60) tips.push({ icon: "📉", cls: "warn", text: `Consistency <b>${consistency.toFixed(0)}%</b>. Aim for steady rhythm.` });
+  else if (consistency > 85) tips.push({ icon: "🎵", cls: "good", text: `Consistency <b>${consistency.toFixed(0)}%</b> — excellent.` });
+  const weak = analyzeWeakKeys();
+  if (weak.length) tips.push({ icon: "🧠", cls: "ai-tip", text: `Weak keys: ${weak.slice(0,3).map(w=>`<b>${w.key}</b>`).join(", ")}. Try <b>🧠 Adaptive mode</b>.` });
+  const wrap = $("tips");
+  wrap.innerHTML = "";
+  tips.forEach(t => {
+    const d = document.createElement("div");
+    d.className = "tip " + (t.cls || "");
+    d.innerHTML = `<span class="icon">${t.icon}</span><span>${t.text}</span>`;
+    wrap.appendChild(d);
+  });
+}
+function buildWeakKeys() {
+  const wrap = $("weakKeys");
+  wrap.innerHTML = "";
+  const weak = analyzeWeakKeys();
+  if (!weak.length) { wrap.innerHTML = `<div style="padding:8px;color:var(--dim);font-size:12.5px;">🧠 Not enough data yet.</div>`; return; }
+  const maxErr = Math.max(...weak.map(w => w.errorRate));
+  weak.forEach(w => {
+    const chip = document.createElement("div");
+    chip.className = "key-chip";
+    chip.innerHTML = `
+      <div class="kc-key">${w.key === " " ? "␣" : w.key}</div>
+      <div class="kc-bar"><div class="kc-fill" style="width:${(w.errorRate / maxErr) * 100}%"></div></div>
+      <div class="kc-err">${(w.errorRate * 100).toFixed(0)}% miss</div>
+    `;
+    wrap.appendChild(chip);
+  });
+}
+
+function drawChart() {
+  const canvas = $("wpmChart");
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const w = rect.width, h = rect.height;
+  const pad = { l: 34, r: 12, t: 12, b: 22 };
+  const innerW = w - pad.l - pad.r;
+  const innerH = h - pad.t - pad.b;
+  const data = state.wpmHistory.length ? state.wpmHistory : [0];
+  let maxY = Math.max(40, ...data) * 1.15;
+  if (state.goalEnabled && state.goalWpm > maxY * 0.8) maxY = state.goalWpm * 1.3;
+  const styles = getComputedStyle(document.documentElement);
+  const dim = styles.getPropertyValue("--dim").trim();
+  const accent = styles.getPropertyValue("--accent").trim();
+  const accent2 = styles.getPropertyValue("--accent2").trim();
+  const gold = styles.getPropertyValue("--gold").trim();
+  ctx.clearRect(0, 0, w, h);
+  ctx.strokeStyle = dim; ctx.globalAlpha = .2; ctx.lineWidth = 1;
+  ctx.font = "10px Inter, sans-serif"; ctx.fillStyle = dim; ctx.globalAlpha = .7;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.t + (innerH / 4) * i;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + innerW, y); ctx.stroke();
+    ctx.fillText(Math.round(maxY - (maxY / 4) * i), 6, y + 3);
+  }
+  ctx.globalAlpha = 1;
+  const steps = Math.min(data.length, 6);
+  for (let i = 0; i < steps; i++) {
+    const idx = Math.round((data.length - 1) * (i / Math.max(1, steps - 1)));
+    const x = pad.l + (innerW * idx) / Math.max(1, data.length - 1);
+    ctx.fillText(idx + 1 + "s", x - 8, h - 6);
+  }
+  if (state.goalEnabled) {
+    const goalY = pad.t + innerH - (state.goalWpm / maxY) * innerH;
+    if (goalY >= pad.t && goalY <= pad.t + innerH) {
+      ctx.save();
+      ctx.setLineDash([6, 4]); ctx.strokeStyle = gold; ctx.lineWidth = 1.5; ctx.globalAlpha = .7;
+      ctx.beginPath(); ctx.moveTo(pad.l, goalY); ctx.lineTo(pad.l + innerW, goalY); ctx.stroke();
+      ctx.restore();
+      ctx.fillStyle = gold; ctx.font = "bold 9.5px Inter, sans-serif";
+      ctx.fillText(`🎯 ${state.goalWpm}`, pad.l + innerW - 42, goalY - 3);
+    }
+  }
+  if (data.length < 2) {
+    ctx.font = "12px Inter, sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Not enough data", w / 2, h / 2);
+    ctx.textAlign = "left"; return;
+  }
+  const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + innerH);
+  grad.addColorStop(0, accent + "55"); grad.addColorStop(1, accent + "00");
+  const points = data.map((v, i) => ({ x: pad.l + (innerW * i) / (data.length - 1), y: pad.t + innerH - (v / maxY) * innerH }));
+  ctx.beginPath(); ctx.moveTo(points[0].x, pad.t + innerH);
+  points.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.lineTo(points[points.length - 1].x, pad.t + innerH);
+  ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
+  ctx.beginPath();
+  points.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+  ctx.strokeStyle = accent; ctx.lineWidth = 2; ctx.lineJoin = "round"; ctx.stroke();
+  points.forEach(p => {
+    ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+    ctx.fillStyle = accent2; ctx.fill();
+    ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.stroke();
+  });
+}
+
+/* ==========================================================
+   TOAST + CHIME
+   ========================================================== */
+let toastTimer = null;
+function showToast(emoji, msg) {
+  el.toastEmoji.textContent = emoji;
+  el.toastMsg.textContent = msg;
+  el.toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.toast.classList.remove("show"), 4000);
+}
+function playChime() {
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    const ctx = new AC(); const now = ctx.currentTime;
+    [523.25, 659.25, 783.99].forEach((f, i) => {
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.type = "sine"; o.frequency.value = f;
+      g.gain.setValueAtTime(0, now + i * 0.09);
+      g.gain.linearRampToValueAtTime(0.1, now + i * 0.09 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.09 + 0.9);
+      o.connect(g).connect(ctx.destination);
+      o.start(now + i * 0.09); o.stop(now + i * 0.09 + 1);
+    });
+  } catch {}
+}
+
+/* ==========================================================
+   JOURNEY
+   ========================================================== */
+function renderGreeting() {
+  if (!user || !user.name) { el.greeting.textContent = ""; return; }
+  const h = new Date().getHours();
+  const g = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+  el.greeting.innerHTML = `${g}, <b>${user.name}</b> 👋`;
+}
+function renderJourney() {
+  if (!user) return;
+  $("jStreak").textContent = user.streak || 0;
+  $("jPB").textContent = Math.round(user.bestWpm || 0);
+  $("jWords").textContent = (user.words || 0).toLocaleString();
+  const recent = user.history ? user.history.slice(-7) : [];
+  const trendEl = $("jTrend"); const trendSub = $("jTrendSub");
+  if (recent.length < 2) { trendEl.textContent = "—"; trendSub.textContent = "need more tests"; }
+  else {
+    const prev7 = user.history.slice(-14, -7);
+    const recentAvg = recent.reduce((a, b) => a + b.wpm, 0) / recent.length;
+    if (prev7.length >= 2) {
+      const prevAvg = prev7.reduce((a, b) => a + b.wpm, 0) / prev7.length;
+      const d = recentAvg - prevAvg;
+      trendEl.innerHTML = `${recentAvg.toFixed(0)} <span class="delta ${d>=0?'up':'down'}">${d>=0?"+":""}${d.toFixed(1)}</span>`;
+      trendSub.textContent = "vs previous week";
+    } else {
+      trendEl.textContent = recentAvg.toFixed(0);
+      trendSub.textContent = "building baseline…";
+    }
+  }
+  renderHeatmap();
+}
+function renderHeatmap() {
+  const grid = $("heatmapGrid"); grid.innerHTML = "";
+  const today = todayKey();
+  for (let i = 29; i >= 0; i--) {
+    const key = dateKeyOffset(i);
+    const cell = document.createElement("div");
+    cell.className = "hm-cell";
+    const day = user && user.days ? user.days[key] : null;
+    if (day && day.tests > 0) cell.classList.add("active");
+    if (key === today) cell.classList.add("today");
+    cell.title = day && day.tests > 0 ? `${key}: ${day.tests} tests` : `${key}: none`;
+    grid.appendChild(cell);
+  }
+}
+function renderAIStrip() {
+  if (!user) return;
+  const weak = analyzeWeakKeys();
+  const recent = user.history ? user.history.slice(-5) : [];
+  const node = el.aiStripText;
+  if (user.tests === 0) { node.innerHTML = `Welcome! Complete a few tests and I'll analyze your patterns.`; return; }
+  const bits = [];
+  if (user.goalsHit && state.goalEnabled) bits.push(`🎯 Goal hit-rate: <b>${Math.round((user.goalsHit / (user.goalsHit + (user.goalsMissed||0))) * 100)}%</b>`);
+  if (weak.length) bits.push(`Weakest key: <b>${weak[0].key}</b> (${(weak[0].errorRate*100).toFixed(0)}% miss).`);
+  if (recent.length >= 3) {
+    const d = recent[recent.length - 1].wpm - recent[0].wpm;
+    if (d > 3) bits.push(`Trending <b>up ${d.toFixed(1)} WPM</b> 📈`);
+  }
+  node.innerHTML = bits.slice(0, 2).join(" ");
+}
+
+/* ==========================================================
+   NAV
+   ========================================================== */
+function switchView(view) {
+  document.querySelectorAll(".nav-tab").forEach(t => t.classList.toggle("active", t.dataset.view === view));
+  $("view-practice").style.display = view === "practice" ? "block" : "none";
+  $("view-cert").classList.toggle("active", view === "cert");
+  $("view-verify").classList.toggle("active", view === "verify");
+  $("view-admin").classList.toggle("active", view === "admin");
+  if (view === "cert") renderCertView();
+  if (view === "admin") renderAdminView();
+}
+
+/* ==========================================================
+   ADMIN
+   ========================================================== */
+let brandClickCount = 0;
+let brandClickTimer = null;
+$("brandLogo").addEventListener("click", () => {
+  brandClickCount++;
+  clearTimeout(brandClickTimer);
+  brandClickTimer = setTimeout(() => { brandClickCount = 0; }, 800);
+  if (brandClickCount >= 3) {
+    brandClickCount = 0;
+    if (isAdmin) { enterAdminMode(); return; }
+    $("adminLoginModal").classList.add("show");
+    setTimeout(() => $("adminPassInput").focus(), 100);
+  }
+});
+
+$("adminLoginCancel").addEventListener("click", () => {
+  $("adminLoginModal").classList.remove("show");
+  $("adminPassInput").value = "";
+  $("adminLoginError").style.display = "none";
+});
+$("adminLoginConfirm").addEventListener("click", tryAdminLogin);
+$("adminPassInput").addEventListener("keydown", e => { if (e.key === "Enter") tryAdminLogin(); });
+
+function tryAdminLogin() {
+  const pass = $("adminPassInput").value;
+  if (pass === ADMIN_PASSWORD) {
+    isAdmin = true;
+    $("adminLoginModal").classList.remove("show");
+    $("adminPassInput").value = "";
+    $("adminLoginError").style.display = "none";
+    enterAdminMode();
+    showToast("🛡️", "Admin mode unlocked");
+  } else {
+    $("adminLoginError").style.display = "block";
+  }
+}
+
+function enterAdminMode() {
+  el.adminPill.style.display = "inline-flex";
+  $("adminNavTabs").style.display = "flex";
+  $("mainNavTabs").style.display = "none";
+  switchView("admin");
+}
+
+$("adminLockBtn").addEventListener("click", () => {
+  isAdmin = false;
+  el.adminPill.style.display = "none";
+  $("adminNavTabs").style.display = "none";
+  $("mainNavTabs").style.display = "flex";
+  switchView("practice");
+  showToast("🔒", "Admin locked");
+});
+
+function renderAdminView() {
+  $("adminEasyMode").checked = adminConfig.easyMode;
+  $("adminDuration").value = adminConfig.duration;
+  $("adminAccRange").value = adminConfig.acc;
+  $("adminAccValue").textContent = adminConfig.acc + "%";
+  $("adminConsRange").value = adminConfig.cons;
+  $("adminConsValue").textContent = adminConfig.cons + "%";
+  $("adminBackspace").checked = adminConfig.backspace;
+  $("adminWordDiff").value = adminConfig.wordDiff;
+  updateExamRulesDisplay();
+}
+
+$("adminEasyMode").addEventListener("change", e => {
+  adminConfig.easyMode = e.target.checked;
+  if (adminConfig.easyMode) {
+    adminConfig.duration = 5;
+    adminConfig.acc = 90;
+    adminConfig.cons = 60;
+    adminConfig.backspace = true;
+    adminConfig.wordDiff = "medium";
+    saveAdminConfig(adminConfig);
+    renderAdminView();
+    showToast("✨", "Easy mode applied");
+  } else {
+    saveAdminConfig(adminConfig);
+  }
+});
+$("adminDuration").addEventListener("input", e => {
+  let v = parseInt(e.target.value);
+  if (isNaN(v)) v = 5;
+  v = Math.max(1, Math.min(10, v));
+  adminConfig.duration = v;
+  saveAdminConfig(adminConfig);
+  updateExamRulesDisplay();
+});
+$("adminAccRange").addEventListener("input", e => {
+  adminConfig.acc = parseInt(e.target.value);
+  $("adminAccValue").textContent = adminConfig.acc + "%";
+  saveAdminConfig(adminConfig);
+  updateExamRulesDisplay();
+});
+$("adminConsRange").addEventListener("input", e => {
+  adminConfig.cons = parseInt(e.target.value);
+  $("adminConsValue").textContent = adminConfig.cons + "%";
+  saveAdminConfig(adminConfig);
+  updateExamRulesDisplay();
+});
+$("adminBackspace").addEventListener("change", e => {
+  adminConfig.backspace = e.target.checked;
+  saveAdminConfig(adminConfig);
+  updateExamRulesDisplay();
+});
+$("adminWordDiff").addEventListener("change", e => {
+  adminConfig.wordDiff = e.target.value;
+  saveAdminConfig(adminConfig);
+  updateExamRulesDisplay();
+});
+$("adminResetBtn").addEventListener("click", () => {
+  adminConfig = { ...DEFAULT_ADMIN_CONFIG };
+  saveAdminConfig(adminConfig);
+  renderAdminView();
+  showToast("✨", "Reset to defaults");
+});
+$("adminWipeBtn").addEventListener("click", () => {
+  if (confirm("Delete all local data? This cannot be undone.")) {
+    localStorage.clear();
+    location.reload();
+  }
+});
+
+function updateExamRulesDisplay() {
+  $("ruleDur").textContent = adminConfig.duration + " minute" + (adminConfig.duration > 1 ? "s" : "");
+  $("ruleAcc").textContent = adminConfig.acc + "%";
+  $("ruleCons").textContent = adminConfig.cons + "%";
+  $("ruleBs").textContent = adminConfig.backspace ? "Allowed" : "Disabled";
+}
+
+/* ==========================================================
+   CERT VIEW
+   ========================================================== */
+function renderCertView() {
+  renderTierGrid();
+  renderMyCerts();
+  updateExamRulesDisplay();
+}
+function renderTierGrid() {
+  const grid = $("tierGrid"); grid.innerHTML = "";
+  CERT_TIERS.forEach(t => {
+    const div = document.createElement("div");
+    div.className = "tier-card" + (state.selectedTier === t.id ? " selected" : "");
+    div.dataset.tier = t.id;
+    div.innerHTML = `
+      <div class="tier-icon">${t.icon}</div>
+      <div class="tier-name">${t.name}</div>
+      <div class="tier-wpm">${t.wpm}</div>
+      <div class="tier-wpm-label">WPM target</div>
+      <div class="tier-criteria">Accuracy ≥ <b>${Math.min(t.acc, adminConfig.acc)}%</b><br>Consistency ≥ <b>${Math.min(t.cons, adminConfig.cons)}%</b></div>
+    `;
+    div.addEventListener("click", () => {
+      document.querySelectorAll(".tier-card").forEach(c => c.classList.remove("selected"));
+      div.classList.add("selected");
+      state.selectedTier = t.id;
+      state.certTarget = t.wpm;
+      $("customWpmRange").value = t.wpm;
+      $("customWpmValue").innerHTML = `${t.wpm}<span class="unit">WPM</span>`;
+    });
+    grid.appendChild(div);
+  });
+}
+function renderMyCerts() {
+  const wrap = $("myCerts"); wrap.innerHTML = "";
+  if (!user || !user.certificates || !user.certificates.length) return;
+  const h = document.createElement("h3");
+  h.style.cssText = "font-size:12.5px;font-weight:800;letter-spacing:.5px;margin-bottom:10px;color:var(--dim);text-transform:uppercase;";
+  h.textContent = `Your certificates (${user.certificates.length})`;
+  wrap.appendChild(h);
+  const grid = document.createElement("div");
+  grid.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;";
+  user.certificates.forEach(c => {
+    const tier = CERT_TIERS.find(t => t.id === c.tier) || { name: "Custom", icon: "🎯" };
+    const card = document.createElement("div");
+    card.className = "j-card"; card.style.cursor = "pointer";
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+        <div style="font-size:22px;">${tier.icon}</div>
+        <div>
+          <div style="font-size:12.5px;font-weight:800;">${tier.name} Tier</div>
+          <div style="font-size:10px;color:var(--dim);font-family:'JetBrains Mono',monospace;">${c.id}</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--dim);margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);">
+        <span><b style="color:var(--text);">${c.wpm.toFixed(0)}</b> WPM</span>
+        <span>target <b style="color:var(--text);">${c.target}</b></span>
+      </div>
+      <div style="font-size:10px;color:var(--dim);margin-top:5px;">${c.date}</div>
+    `;
+    card.addEventListener("click", () => showCertificate(c));
+    grid.appendChild(card);
+  });
+  wrap.appendChild(grid);
+}
+$("customWpmRange").addEventListener("input", (e) => {
+  const v = parseInt(e.target.value);
+  state.certTarget = v;
+  $("customWpmValue").innerHTML = `${v}<span class="unit">WPM</span>`;
+  const matching = CERT_TIERS.find(t => t.wpm === v);
+  document.querySelectorAll(".tier-card").forEach(c => c.classList.remove("selected"));
+  if (matching) {
+    state.selectedTier = matching.id;
+    const card = document.querySelector(`[data-tier="${matching.id}"]`);
+    if (card) card.classList.add("selected");
+  } else state.selectedTier = null;
+});
+
+/* ==========================================================
+   REALISTIC PAYMENT
+   ========================================================== */
+function openSubModal() { $("subModal").classList.add("show"); }
+$("subCancel").addEventListener("click", () => $("subModal").classList.remove("show"));
+let pendingPlan = null;
+let pendingPrice = 0;
+document.querySelectorAll(".plan").forEach(p => {
+  p.addEventListener("click", () => {
+    pendingPlan = p.dataset.plan;
+    pendingPrice = parseFloat(p.dataset.price);
+    $("subModal").classList.remove("show");
+    openCheckout();
+  });
+});
+
+function openCheckout() {
+  $("coPlanName").textContent = pendingPlan === "monthly" ? "Monthly" : "Yearly";
+  const subtotal = pendingPrice;
+  const tax = +(subtotal * 0.0).toFixed(2); // simplify tax = 0
+  $("coSubtotal").textContent = "$" + subtotal.toFixed(2);
+  $("coTax").textContent = "$" + tax.toFixed(2);
+  $("coTotal").textContent = "$" + (subtotal + tax).toFixed(2);
+  $("coPayBtn").textContent = `🔒 Pay $${(subtotal + tax).toFixed(2)}`;
+  // reset form
+  $("coEmail").value = user && user.email ? user.email : "";
+  $("coCard").value = "";
+  $("coExpiry").value = "";
+  $("coCvc").value = "";
+  $("coCardBrand").textContent = "";
+  document.querySelectorAll(".field-error").forEach(e => e.classList.remove("show"));
+  document.querySelectorAll(".card-input-wrap input, .checkout-form input").forEach(i => i.classList.remove("valid", "invalid"));
+  $("checkoutModal").classList.add("show");
+}
+
+/* Card formatting */
+$("coCard").addEventListener("input", (e) => {
+  let v = e.target.value.replace(/\D/g, "").slice(0, 19);
+  v = v.replace(/(.{4})/g, "$1 ").trim();
+  e.target.value = v;
+  // detect brand
+  const digits = v.replace(/\s/g, "");
+  let brand = "";
+  if (/^4/.test(digits)) brand = "💳 Visa";
+  else if (/^5[1-5]/.test(digits) || /^2[2-7]/.test(digits)) brand = "💳 Mastercard";
+  else if (/^3[47]/.test(digits)) brand = "💳 Amex";
+  else if (/^6/.test(digits)) brand = "💳 Discover";
+  $("coCardBrand").textContent = brand;
+});
+$("fillTestCard").addEventListener("click", () => {
+  $("coCard").value = "4242 4242 4242 4242";
+  $("coExpiry").value = "12/29";
+  $("coCvc").value = "123";
+  if (!$("coEmail").value) $("coEmail").value = "demo@typeflow.ai";
+  $("coCard").dispatchEvent(new Event("input"));
+});
+$("coExpiry").addEventListener("input", (e) => {
+  let v = e.target.value.replace(/\D/g, "").slice(0, 4);
+  if (v.length >= 3) v = v.slice(0, 2) + "/" + v.slice(2);
+  e.target.value = v;
+});
+$("coCvc").addEventListener("input", (e) => {
+  e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4);
+});
+
+/* Luhn check */
+function luhn(num) {
+  const digits = num.replace(/\s/g, "").split("").reverse().map(Number);
+  let sum = 0;
+  for (let i = 0; i < digits.length; i++) {
+    let d = digits[i];
+    if (i % 2 === 1) { d *= 2; if (d > 9) d -= 9; }
+    sum += d;
+  }
+  return sum % 10 === 0 && digits.length >= 13;
+}
+function validEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+$("coCancel").addEventListener("click", () => $("checkoutModal").classList.remove("show"));
+$("coPayBtn").addEventListener("click", () => {
+  // validate
+  let ok = true;
+  const email = $("coEmail").value.trim();
+  const cardRaw = $("coCard").value.replace(/\s/g, "");
+  const exp = $("coExpiry").value;
+  const cvc = $("coCvc").value;
+
+  document.querySelectorAll(".field-error").forEach(e => e.classList.remove("show"));
+  document.querySelectorAll(".checkout-form input").forEach(i => i.classList.remove("invalid", "valid"));
+
+  if (!validEmail(email)) { $("coEmail").classList.add("invalid"); ok = false; }
+
+  if (cardRaw.length < 13 || !luhn(cardRaw)) {
+    $("coCardError").classList.add("show");
+    $("coCard").classList.add("invalid");
+    ok = false;
+  } else $("coCard").classList.add("valid");
+
+  // expiry check MM/YY
+  const m = exp.match(/^(\d{2})\/(\d{2})$/);
+  let expOk = false;
+  if (m) {
+    const mo = parseInt(m[1]), yr = 2000 + parseInt(m[2]);
+    const now = new Date();
+    const expiry = new Date(yr, mo, 0);
+    expOk = mo >= 1 && mo <= 12 && expiry >= now;
+  }
+  if (!expOk) { $("coExpiryError").classList.add("show"); $("coExpiry").classList.add("invalid"); ok = false; }
+  else $("coExpiry").classList.add("valid");
+
+  if (cvc.length < 3) { $("coCvcError").classList.add("show"); $("coCvc").classList.add("invalid"); ok = false; }
+  else $("coCvc").classList.add("valid");
+
+  if (!ok) return;
+
+  $("checkoutModal").classList.remove("show");
+  processPayment({ email, cardRaw, last4: cardRaw.slice(-4) });
+});
+
+function processPayment({ email, cardRaw, last4 }) {
+  $("processingModal").classList.add("show");
+  // reset steps
+  ["ps1", "ps2", "ps3"].forEach(id => { const s = $(id); s.classList.remove("active", "done"); });
+  $("ps1").classList.add("active");
+
+  setTimeout(() => {
+    $("ps1").classList.remove("active"); $("ps1").classList.add("done"); $("ps1").querySelector(".check").textContent = "✓";
+    $("ps2").classList.add("active");
+  }, 900);
+
+  setTimeout(() => {
+    $("ps2").classList.remove("active"); $("ps2").classList.add("done"); $("ps2").querySelector(".check").textContent = "✓";
+    $("ps3").classList.add("active");
+  }, 1900);
+
+  setTimeout(() => {
+    $("ps3").classList.remove("active"); $("ps3").classList.add("done"); $("ps3").querySelector(".check").textContent = "✓";
+    $("processingModal").classList.remove("show");
+
+    // 90% success, 10% decline for realism
+    const declined = Math.random() < 0.1;
+    if (declined) {
+      $("declineModal").classList.add("show");
+    } else {
+      completePurchase({ email, last4 });
+    }
+  }, 2800);
+}
+
+function completePurchase({ email, last4 }) {
+  if (!user) user = defaultUser();
+  const txn = "txn_" + Math.random().toString(36).slice(2, 14);
+  const amount = pendingPrice;
+  const invoice = {
+    txn, amount, plan: pendingPlan, last4,
+    date: new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
+    ts: Date.now()
+  };
+  user.isPro = true;
+  user.plan = pendingPlan || "yearly";
+  user.proSince = Date.now();
+  user.email = email;
+  if (!user.invoices) user.invoices = [];
+  user.invoices.push(invoice);
+  saveUser(user);
+  updateProUI();
+
+  // fill receipt
+  $("rcvTxn").textContent = txn;
+  $("rcvPlan").textContent = pendingPlan === "monthly" ? "Monthly" : "Yearly";
+  $("rcvCard").textContent = "•••• " + last4;
+  $("rcvDate").textContent = invoice.date;
+  $("rcvAmount").textContent = "$" + amount.toFixed(2);
+  $("rcvDownloadBtn").onclick = () => downloadInvoicePDF(invoice);
+
+  $("successModal").classList.add("show");
+  playChime();
+}
+
+$("rcvDoneBtn").addEventListener("click", () => $("successModal").classList.remove("show"));
+$("declineRetryBtn").addEventListener("click", () => {
+  $("declineModal").classList.remove("show");
+  openCheckout();
+});
+$("declineCancelBtn").addEventListener("click", () => $("declineModal").classList.remove("show"));
+
+function updateProUI() {
+  if (user && user.isPro) el.proBadge.style.display = "inline-flex";
+  else el.proBadge.style.display = "none";
+}
+el.proBadge.addEventListener("click", openBilling);
+
+/* Invoice PDF (simple text download since no libs) */
+function downloadInvoicePDF(inv) {
+  const text =
+`==============================================
+              TYPEFLOW AI
+         PAYMENT RECEIPT / INVOICE
+==============================================
+
+Transaction ID:  ${inv.txn}
+Date:            ${inv.date}
+Plan:            ${inv.plan.charAt(0).toUpperCase() + inv.plan.slice(1)}
+Card:            •••• ${inv.last4}
+Status:          PAID
+
+----------------------------------------------
+Amount charged:  $${inv.amount.toFixed(2)}
+Currency:        USD
+----------------------------------------------
+
+Thank you for supporting TypeFlow AI.
+Questions? support@typeflow.ai
+
+==============================================`;
+  const blob = new Blob([text], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = `TypeFlow-Invoice-${inv.txn}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("📄", "Invoice downloaded");
+}
+
+/* Billing */
+function openBilling() {
+  const list = $("invoicesList");
+  list.innerHTML = "";
+  const invoices = user && user.invoices ? user.invoices : [];
+  if (!invoices.length) {
+    list.innerHTML = `<div style="text-align:center;color:var(--dim);font-size:13px;padding:20px;">No invoices yet.</div>`;
+  } else {
+    invoices.slice().reverse().forEach(inv => {
+      const card = document.createElement("div");
+      card.className = "invoice-card";
+      card.innerHTML = `
+        <div class="inv-left">
+          <div class="inv-icon">✓</div>
+          <div class="inv-info">
+            <div style="font-weight:700;">${inv.plan.charAt(0).toUpperCase() + inv.plan.slice(1)} plan</div>
+            <div class="inv-id">${inv.txn} · ${inv.date}</div>
+          </div>
+        </div>
+        <div class="inv-amount">$${inv.amount.toFixed(2)}</div>
+      `;
+      card.addEventListener("click", () => downloadInvoicePDF(inv));
+      list.appendChild(card);
+    });
+  }
+  $("billingModal").classList.add("show");
+}
+$("billingCloseBtn").addEventListener("click", () => $("billingModal").classList.remove("show"));
+$("billingCancelBtn").addEventListener("click", () => {
+  if (!user || !user.isPro) return;
+  if (confirm("Cancel your Pro subscription? You'll keep access until end of billing period.")) {
+    user.isPro = false;
+    saveUser(user);
+    updateProUI();
+    $("billingModal").classList.remove("show");
+    showToast("⭕", "Subscription cancelled");
+  }
+});
+
+/* ==========================================================
+   EXAM
+   ========================================================== */
+$("startExamBtn").addEventListener("click", () => {
+  if (!user || !user.isPro) { openSubModal(); return; }
+  const target = state.selectedTier
+    ? (CERT_TIERS.find(t => t.id === state.selectedTier)?.wpm || 60)
+    : state.certTarget;
+  startExam(target, state.selectedTier);
+});
+
+function startExam(targetWpm, tierId) {
+  state.certTarget = targetWpm;
+  state.certTargetTier = tierId;
+
+  const durationSec = adminConfig.duration * 60;
+  const bank = WORD_BANK[adminConfig.wordDiff] || WORD_BANK.medium;
+  const text = generateFromBank([...WORD_BANK.easy, ...bank], durationSec);
+
+  const es = {
+    text, words: text.split(" "),
+    typedWords: [], charSpans: [],
+    currentWord: 0, currentChar: 0,
+    correctChars: 0, incorrectChars: 0, totalTyped: 0, mistakes: 0,
+    wpmHistory: [], started: false, finished: false,
+    startTime: 0, timerId: null, uiTimerId: null,
+    time: durationSec,
+    allowBackspace: adminConfig.backspace
+  };
+  state.examState = es;
+
+  const wrap = $("examWordsWrap");
+  wrap.textContent = "";
+  wrap.style.transition = "none";
+  wrap.style.transform = "translate3d(0,0,0)";
+  const frag = document.createDocumentFragment();
+  es.charSpans = [];
+  for (let wi = 0; wi < es.words.length; wi++) {
+    const wordEl = document.createElement("span");
+    wordEl.className = "word" + (wi === 0 ? "" : " pending");
+    const spans = [];
+    for (const ch of es.words[wi]) {
+      const s = document.createElement("span");
+      s.className = "char";
+      s.textContent = ch;
+      wordEl.appendChild(s);
+      spans.push(s);
+    }
+    es.charSpans.push(spans);
+    frag.appendChild(wordEl);
+  }
+  wrap.appendChild(frag);
+
+  $("examTarget").textContent = targetWpm + " WPM";
+  const dur = adminConfig.duration;
+  $("examTimer").textContent = `${dur}:00`;
+  $("examNeedAcc").textContent = adminConfig.acc;
+  $("examNeedCons").textContent = adminConfig.cons;
+  $("examWpm").textContent = "0";
+  $("examAcc").textContent = "100%";
+  $("examErrors").textContent = "0";
+  $("examProgress").style.width = "0%";
+  // reset live status
+  ["elsSpeed", "elsAcc", "elsCons"].forEach(id => $(id).className = "els-item");
+
+  $("examMode").style.display = "block";
+  $("examTextArea").classList.add("blurred");
+  $("examOverlay").classList.add("show");
+  $("examCaret").classList.add("idle");
+  $("examCaret").style.transform = "translate3d(0,0,0)";
+  const lh = getComputedStyle(document.documentElement).getPropertyValue("--lh");
+  $("examCaret").style.height = lh;
+  setTimeout(() => $("examTextArea").focus(), 100);
+}
+function examStart() {
+  const es = state.examState;
+  if (!es || es.started) return;
+  es.started = true;
+  es.startTime = performance.now();
+  $("examOverlay").classList.remove("show");
+  $("examTextArea").classList.remove("blurred");
+  $("examCaret").classList.remove("idle");
+  es.timerId = setInterval(() => {
+    const elapsed = (performance.now() - es.startTime) / 1000;
+    const remaining = Math.max(0, es.time - elapsed);
+    const m = Math.floor(remaining / 60);
+    const s = Math.floor(remaining % 60);
+    $("examTimer").textContent = `${m}:${String(s).padStart(2, "0")}`;
+    $("examProgress").style.width = Math.min(100, (elapsed / es.time) * 100) + "%";
+    if (remaining <= 0) finishExam();
+  }, 100);
+  let lastSec = 0;
+  es.uiTimerId = setInterval(() => {
+    const elapsed = (performance.now() - es.startTime) / 1000;
+    const secNow = Math.floor(elapsed);
+    const wpm = es.correctChars > 0 ? (es.correctChars / 5) / (elapsed / 60) : 0;
+    if (secNow > lastSec) { lastSec = secNow; es.wpmHistory.push(wpm); }
+    $("examWpm").textContent = wpm.toFixed(0);
+    const acc = es.totalTyped === 0 ? 100 : (es.correctChars / es.totalTyped) * 100;
+    $("examAcc").textContent = acc.toFixed(1) + "%";
+    $("examErrors").textContent = es.incorrectChars;
+    // live status
+    const passedWpm = wpm >= state.certTarget;
+    const passedAcc = acc >= adminConfig.acc;
+    const cons = computeConsistency(es.wpmHistory);
+    const passedCons = cons >= adminConfig.cons;
+    $("elsSpeed").className = "els-item " + (passedWpm ? "pass" : "fail");
+    $("elsAcc").className = "els-item " + (passedAcc ? "pass" : "fail");
+    $("elsCons").className = "els-item " + (passedCons ? "pass" : "fail");
+  }, 200);
+}
+function computeConsistency(arr) {
+  if (!arr || arr.length < 3) return 100;
+  const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
+  if (mean === 0) return 100;
+  const variance = arr.reduce((a, b) => a + (b - mean) ** 2, 0) / arr.length;
+  const std = Math.sqrt(variance);
+  return Math.max(0, 100 - (std / mean) * 100);
+}
+function examHandleKey(e) {
+  const es = state.examState;
+  if (!es || es.finished) return;
+  const key = e.key;
+  if (key === "Backspace") {
+    if (!es.allowBackspace) { e.preventDefault(); return; }
+    // allow
+    e.preventDefault();
+    if (es.currentChar > 0) {
+      const wi = es.currentWord;
+      const word = es.words[wi];
+      const wordEl = $("examWordsWrap").children[wi];
+      if (es.currentChar > word.length) {
+        const last = wordEl.lastElementChild;
+        if (last && last.classList.contains("extra")) wordEl.removeChild(last);
+      } else {
+        const span = es.charSpans[wi][es.currentChar - 1];
+        if (span) span.classList.remove("correct", "incorrect");
+      }
+      es.currentChar--;
+      es.typedWords[wi] = (es.typedWords[wi] || "").slice(0, -1);
+      examPlaceCaret();
+    }
+    return;
+  }
+  if (key === "Escape") { e.preventDefault(); abortExam(); return; }
+  if (["Shift","Control","Alt","Meta","Tab"].includes(key)) return;
+  if (!es.started) examStart();
+  const wi = es.currentWord;
+  const word = es.words[wi];
+  if (!word) return;
+  const typed = es.typedWords[wi] || "";
+  const spans = es.charSpans[wi];
+  if (key === " ") {
+    e.preventDefault();
+    if (typed.length === 0) return;
+    $("examWordsWrap").children[wi].classList.remove("pending");
+    es.currentWord++; es.currentChar = 0;
+    const next = $("examWordsWrap").children[es.currentWord];
+    if (next) next.classList.remove("pending");
+    examPlaceCaret(); examScrollToLine();
+    return;
+  }
+  if (key.length !== 1) return;
+  es.totalTyped++;
+  const target = word[es.currentChar];
+  const isCorrect = key === target;
+  if (isCorrect) es.correctChars++;
+  else { es.incorrectChars++; es.mistakes++; }
+  const span = spans[es.currentChar];
+  if (span) {
+    span.classList.remove("correct", "incorrect");
+    span.classList.add(isCorrect ? "correct" : "incorrect");
+  } else {
+    const wordEl = $("examWordsWrap").children[wi];
+    const s = document.createElement("span");
+    s.className = "char extra"; s.textContent = key;
+    wordEl.appendChild(s);
+  }
+  es.typedWords[wi] = typed + key;
+  es.currentChar++;
+  examPlaceCaret();
+}
+function examPlaceCaret() {
+  const es = state.examState;
+  if (!es) return;
+  const caret = $("examCaret");
+  const wrap = $("examWordsWrap");
+  const spans = es.charSpans[es.currentWord];
+  const lh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--lh")) || 44;
+  if (!spans || !spans.length) {
+    const wordEl = wrap.children[es.currentWord];
+    if (!wordEl) return;
+    caret.style.transform = `translate3d(${wordEl.offsetLeft}px, ${wordEl.offsetTop}px, 0)`;
+    caret.style.height = lh + "px"; return;
+  }
+  let x, y;
+  if (es.currentChar >= spans.length) {
+    const last = spans[spans.length - 1];
+    x = last.offsetLeft + last.offsetWidth; y = last.offsetTop;
+  } else {
+    const t = spans[es.currentChar]; x = t.offsetLeft; y = t.offsetTop;
+  }
+  caret.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+  caret.style.height = lh + "px";
+}
+function examScrollToLine() {
+  const es = state.examState;
+  if (!es) return;
+  const wrap = $("examWordsWrap");
+  const wordEl = wrap.children[es.currentWord];
+  if (!wordEl) return;
+  const lh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--lh")) || 44;
+  const line = Math.round(wordEl.offsetTop / lh);
+  const target = Math.max(0, (line - 1) * lh);
+  wrap.style.transition = "transform .25s cubic-bezier(.22,.61,.36,1)";
+  wrap.style.transform = `translate3d(0, ${-target}px, 0)`;
+}
+function finishExam() {
+  const es = state.examState;
+  if (!es || es.finished) return;
+  es.finished = true;
+  clearInterval(es.timerId); clearInterval(es.uiTimerId);
+  const wpm = es.correctChars > 0 ? (es.correctChars / 5) / (es.time / 60) : 0;
+  const acc = es.totalTyped === 0 ? 100 : (es.correctChars / es.totalTyped) * 100;
+  const consistency = computeConsistency(es.wpmHistory);
+  const target = state.certTarget;
+  const reqAcc = adminConfig.acc;
+  const reqCons = adminConfig.cons;
+  const passedWpm = wpm >= target;
+  const passedAcc = acc >= reqAcc;
+  const passedCons = consistency >= reqCons;
+  const passed = passedWpm && passedAcc && passedCons;
+  $("examMode").style.display = "none";
+  setTimeout(() => showExamResult({ wpm, acc, cons: consistency, target, passedWpm, passedAcc, passedCons, passed }), 200);
+}
+function abortExam() {
+  const es = state.examState;
+  if (es) { clearInterval(es.timerId); clearInterval(es.uiTimerId); es.finished = true; }
+  $("examMode").style.display = "none";
+  state.examState = null;
+  showToast("⚠️", "Exam aborted");
+}
+function showExamResult(res) {
+  const tier = res.passed ? (CERT_TIERS.find(t => t.wpm <= res.target) || CERT_TIERS[0]) : null;
+  const modal = document.createElement("div");
+  modal.className = "modal show";
+  modal.innerHTML = `
+    <div class="modal-card" style="max-width:480px;">
+      <div class="modal-emoji" style="font-size:56px;">${res.passed ? "🎉" : "💪"}</div>
+      <h2>${res.passed ? "You passed!" : "Not quite"}</h2>
+      <p>${res.passed ? `You earned your <b>${tier ? tier.name : "custom"}</b> certification.` : `Here's exactly what to improve.`}</p>
+      <div style="background:var(--panel2);border-radius:11px;padding:14px;margin-bottom:14px;">
+        ${examRow("Speed", res.wpm.toFixed(0) + " WPM", res.passedWpm, `need ${res.target}`)}
+        ${examRow("Accuracy", res.acc.toFixed(1) + "%", res.passedAcc, `need ${adminConfig.acc}%`)}
+        ${examRow("Consistency", res.cons.toFixed(0) + "%", res.passedCons, `need ${adminConfig.cons}%`)}
+      </div>
+      <div class="modal-actions">
+        ${res.passed ? `<button class="btn gold" id="viewCertBtn" style="flex:1;">🎓 View Certificate</button>` : `<button class="btn primary" id="retryExamBtn" style="flex:1;">Try Again</button>`}
+        <button class="btn ghost" id="closeExamResBtn">Close</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  const close = () => modal.remove();
+  modal.querySelector("#closeExamResBtn").addEventListener("click", close);
+  if (res.passed) {
+    const cert = issueCertificate({ ...res, tier });
+    modal.querySelector("#viewCertBtn").addEventListener("click", () => { close(); showCertificate(cert); });
+    playChime();
+  } else {
+    modal.querySelector("#retryExamBtn").addEventListener("click", () => { close(); $("startExamBtn").click(); });
+  }
+  state.examState = null;
+}
+function examRow(label, value, passed, need) {
+  return `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--border);">
+      <div style="display:flex;align-items:center;gap:9px;">
+        <div style="width:22px;height:22px;border-radius:50%;background:${passed ? 'rgba(34,197,94,.2)' : 'rgba(239,68,68,.2)'};color:${passed ? 'var(--good)' : 'var(--bad)'};display:grid;place-items:center;font-size:12px;font-weight:900;">${passed ? "✓" : "✗"}</div>
+        <div>
+          <div style="font-size:12.5px;font-weight:700;">${label}</div>
+          <div style="font-size:10.5px;color:var(--dim);">${need}</div>
+        </div>
+      </div>
+      <div style="font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;color:${passed ? 'var(--text)' : 'var(--bad)'};">${value}</div>
+    </div>`;
+}
+
+/* ==========================================================
+   CERTIFICATE
+   ========================================================== */
+function generateCertId() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const seg = n => Array.from({ length: n }, () => chars[(Math.random() * chars.length) | 0]).join("");
+  return `TF-${seg(4)}-${seg(4)}`;
+}
+function issueCertificate(res) {
+  const id = generateCertId();
+  const tier = res.tier || { id: "custom", name: "Custom", icon: "🎯" };
+  const cert = {
+    id, tier: tier.id,
+    wpm: res.wpm, target: res.target, acc: res.acc, cons: res.cons,
+    date: new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
+    ts: Date.now(),
+    name: user.name || "Anonymous Typist"
+  };
+  if (!user.certificates) user.certificates = [];
+  user.certificates.push(cert);
+  saveUser(user);
+  showToast("🎓", `Certificate ${id} issued!`);
+  return cert;
+}
+function showCertificate(cert) {
+  const tier = CERT_TIERS.find(t => t.id === cert.tier) || { name: "Custom", icon: "🎯" };
+  $("certId").textContent = cert.id;
+  $("certVerifyId").textContent = cert.id;
+  $("certName").textContent = cert.name;
+  $("certTierName").textContent = tier.name;
+  $("certDate").textContent = cert.date;
+  $("certWpm").innerHTML = `${cert.wpm.toFixed(0)}<span class="unit">WPM</span>`;
+  $("certTargetV").innerHTML = `${cert.target}<span class="unit">WPM</span>`;
+  $("certAcc").innerHTML = `${cert.acc.toFixed(1)}<span class="unit">%</span>`;
+  $("certCons").innerHTML = `${cert.cons.toFixed(0)}<span class="unit">%</span>`;
+  $("certTier").innerHTML = `${tier.icon} ${tier.name.toUpperCase()}`;
+  $("certModal").classList.add("show");
+}
+$("certPrintBtn").addEventListener("click", () => window.print());
+$("certCloseBtn").addEventListener("click", () => $("certModal").classList.remove("show"));
+$("certCopyBtn").addEventListener("click", () => {
+  const id = $("certId").textContent;
+  const url = `${location.origin}${location.pathname}?cert=${id}`;
+  navigator.clipboard.writeText(`Verify my typing certificate: ${url}`).then(() => showToast("📋", "Copied!"));
+});
+
+/* ==========================================================
+   VERIFY
+   ========================================================== */
+$("verifyBtn").addEventListener("click", () => {
+  const id = $("verifyInput").value.trim().toUpperCase();
+  const result = $("verifyResult");
+  if (!id) { result.innerHTML = `<div style="color:var(--warn);font-size:13px;">Enter an ID.</div>`; return; }
+  let cert = null;
+  if (user && user.certificates) cert = user.certificates.find(c => c.id === id);
+  if (!cert) {
+    result.innerHTML = `<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);border-radius:11px;padding:14px;font-size:13px;color:var(--dim);line-height:1.5;">
+      <div style="font-weight:800;color:var(--bad);margin-bottom:5px;">❌ Not found</div>
+      No certificate with ID <b style="font-family:monospace;">${id}</b> on this device.
+    </div>`; return;
+  }
+  const tier = CERT_TIERS.find(t => t.id === cert.tier) || { name: "Custom", icon: "🎯" };
+  result.innerHTML = `<div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.35);border-radius:11px;padding:14px;">
+    <div style="font-weight:800;color:var(--good);margin-bottom:5px;">✓ Verified</div>
+    <div style="font-size:12.5px;color:var(--dim);line-height:1.6;">
+      <b style="color:var(--text);">${cert.name}</b> earned a <b>${tier.icon} ${tier.name}</b> on ${cert.date}.<br>
+      ${cert.wpm.toFixed(0)} WPM · ${cert.acc.toFixed(1)}% acc
+    </div>
+  </div>`;
+});
+(function () {
+  const params = new URLSearchParams(location.search);
+  const certId = params.get("cert");
+  if (certId) {
+    switchView("verify");
+    $("verifyInput").value = certId;
+    setTimeout(() => $("verifyBtn").click(), 250);
+  }
+})();
+
+/* ==========================================================
+   AI COACH
+   ========================================================== */
+function coachReply(input) {
+  const q = input.toLowerCase().trim();
+  const u = user || defaultUser();
+  const weak = analyzeWeakKeys();
+  const recent = u.history ? u.history.slice(-5) : [];
+  const bestWpm = u.bestWpm || 0;
+
+  if (/^(hi|hello|hey|yo)\b/.test(q)) return `Hey${u.name ? " " + u.name : ""}! 👋 Ask about goals, weak keys, accuracy, speed, or certification.`;
+  if (/goal|target/.test(q)) {
+    if (!u.goalsHit) return `Try a target ~5 WPM below your best (${bestWpm.toFixed(0)}).`;
+    const rate = Math.round((u.goalsHit / (u.goalsHit + (u.goalsMissed||0))) * 100);
+    return `Goal hit-rate: <b>${rate}%</b>. Sweet spot is 60-70%.`;
+  }
+  if (/certif|cert|exam/.test(q)) {
+    if (!u.isPro) return `Certification is <b>Pro</b>. Go to 🎓 Certification.`;
+    return `Exams are now <b>easier</b>: ${adminConfig.duration} min, ≥${adminConfig.acc}% acc, ≥${adminConfig.cons}% cons${adminConfig.backspace ? ", backspace allowed" : ""}.`;
+  }
+  if (/weak|struggle|mistake|error key/.test(q)) {
+    if (!weak.length) return `Try <b>Adaptive mode</b> for a few tests.`;
+    return `Weakest: ${weak.slice(0,4).map(w=>`<b>${w.key}</b> (${(w.errorRate*100).toFixed(0)}%)`).join(", ")}.`;
+  }
+  if (/accuracy/.test(q)) {
+    if (!recent.length) return `Do a couple tests first.`;
+    const avg = recent.reduce((a,b)=>a+b.acc,0) / recent.length;
+    if (avg >= 97) return `Accuracy <b>${avg.toFixed(1)}%</b> — excellent.`;
+    if (avg >= 92) return `Accuracy <b>${avg.toFixed(1)}%</b>. Slow down 10%.`;
+    return `Accuracy <b>${avg.toFixed(1)}%</b>. Precision first.`;
+  }
+  if (/faster|speed|wpm|improve/.test(q)) {
+    if (!bestWpm) return `Do a test first!`;
+    return `Best: <b>${bestWpm.toFixed(0)} WPM</b>. Tips: accuracy first, short bursts, bigram drills.`;
+  }
+  if (/help|what can/.test(q)) return `Try: "weak keys", "how do I get faster?", "certification", "goal stats".`;
+  if (/thanks|thank/.test(q)) return `Anytime${u.name ? ", " + u.name : ""}! 🚀`;
+  return `Ask about weak keys, accuracy, speed, goals, or certification.`;
+}
+function addCoachMsg(text, who = "ai") {
+  const div = document.createElement("div");
+  div.className = "msg " + who;
+  div.innerHTML = text;
+  el.coachBody.appendChild(div);
+  el.coachBody.scrollTop = el.coachBody.scrollHeight;
+}
+function addTypingIndicator() {
+  const div = document.createElement("div");
+  div.className = "msg ai typing-indicator";
+  div.innerHTML = "<span></span><span></span><span></span>";
+  el.coachBody.appendChild(div);
+  el.coachBody.scrollTop = el.coachBody.scrollHeight;
+  return div;
+}
+function bindCoach() {
+  const open = () => {
+    el.coachPanel.classList.add("open");
+    el.coachBackdrop.classList.add("open");
+    if (el.coachBody.children.length === 0) {
+      const u = user || defaultUser();
+      const weak = analyzeWeakKeys();
+      let welcome = `Hey${u.name ? " " + u.name : ""}! 👋 I'm your AI coach.`;
+      if (u.tests === 0) welcome += ` Do a test first.`;
+      else if (weak.length) welcome += ` Weakest: <b>${weak.slice(0,3).map(w=>w.key).join(", ")}</b>.`;
+      welcome += `<div class="msg-suggest">
+        <button data-q="What's my goal hit-rate?">Goal stats</button>
+        <button data-q="What are my weak keys?">Weak keys</button>
+        <button data-q="How do I get certified?">Certification</button>
+      </div>`;
+      addCoachMsg(welcome);
+    }
+    setTimeout(() => el.coachInput.focus(), 100);
+  };
+  const close = () => {
+    el.coachPanel.classList.remove("open");
+    el.coachBackdrop.classList.remove("open");
+  };
+  $("coachBtn").addEventListener("click", open);
+  $("coachInlineBtn").addEventListener("click", open);
+  $("coachClose").addEventListener("click", close);
+  el.coachBackdrop.addEventListener("click", close);
+  $("coachSend").addEventListener("click", () => {
+    const text = el.coachInput.value.trim();
+    if (!text) return;
+    addCoachMsg(text, "user");
+    el.coachInput.value = "";
+    const typing = addTypingIndicator();
+    setTimeout(() => { typing.remove(); addCoachMsg(coachReply(text)); }, 500 + Math.random() * 400);
+  });
+  el.coachInput.addEventListener("keydown", e => { if (e.key === "Enter") $("coachSend").click(); });
+  el.coachBody.addEventListener("click", e => {
+    if (e.target.tagName === "BUTTON" && e.target.dataset.q) {
+      el.coachInput.value = e.target.dataset.q;
+      $("coachSend").click();
+    }
+  });
+}
+
+/* ==========================================================
+   CONTROLS
+   ========================================================== */
+function bindControls() {
+  document.querySelectorAll("[data-time]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-time]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.time = parseInt(btn.dataset.time);
+      $("customTime").value = "";
+      newText();
+    });
+  });
+  $("customTime").addEventListener("change", () => {
+    const v = parseInt($("customTime").value);
+    if (v >= 5 && v <= 600) {
+      document.querySelectorAll("[data-time]").forEach(b => b.classList.remove("active"));
+      state.time = v; newText();
+    } else $("customTime").value = "";
+  });
+  document.querySelectorAll("[data-mode]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-mode]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.mode = btn.dataset.mode; newText();
+    });
+  });
+  document.querySelectorAll("[data-diff]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-diff]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.diff = btn.dataset.diff; newText();
+    });
+  });
+  $("restartBtn").addEventListener("click", restart);
+  $("newBtn").addEventListener("click", newText);
+  $("againBtn").addEventListener("click", () => { el.results.classList.remove("show"); newText(); });
+  $("shareBtn").addEventListener("click", () => {
+    const wpm = $("rWpm").textContent;
+    const acc = $("rAcc").textContent;
+    const goal = state.goalEnabled ? ` (goal ${state.goalWpm})` : "";
+    navigator.clipboard.writeText(`I typed ${wpm} WPM at ${acc} accuracy${goal} on TypeFlow AI 🚀`)
+      .then(() => {
+        const b = $("shareBtn");
+        const old = b.textContent;
+        b.textContent = "✅ Copied!";
+        setTimeout(() => b.textContent = old, 1500);
+      });
+  });
+  el.themeBtn.addEventListener("click", () => {
+    const cur = document.documentElement.getAttribute("data-theme");
+    const next = cur === "light" ? "" : "light";
+    if (next) document.documentElement.setAttribute("data-theme", next);
+    else document.documentElement.removeAttribute("data-theme");
+    el.themeBtn.textContent = next === "light" ? "☀️" : "🌙";
+    if (user) { user.theme = next || "dark"; saveUser(user); }
+    requestAnimationFrame(() => { syncLineHeight(); updateCaretPosition(true); });
+  });
+  el.accentBtn.addEventListener("click", () => {
+    state.accentIdx = (state.accentIdx + 1) % ACCENT_THEMES.length;
+    const name = ACCENT_THEMES[state.accentIdx];
+    if (name === "cosmos") document.documentElement.removeAttribute("data-accent");
+    else document.documentElement.setAttribute("data-accent", name);
+    if (user) { user.accent = name; saveUser(user); }
+  });
+  el.textArea.addEventListener("click", () => el.textArea.focus());
+  $("examAbortBtn").addEventListener("click", abortExam);
+  document.querySelectorAll(".nav-tab").forEach(t => {
+    t.addEventListener("click", () => switchView(t.dataset.view));
+  });
+}
+function restart() {
+  clearInterval(state.timerId); clearInterval(state.uiTimerId);
+  state.text = generateText(); renderText(state.text); el.textArea.focus();
+}
+function newText() {
+  clearInterval(state.timerId); clearInterval(state.uiTimerId);
+  state.text = generateText(); renderText(state.text); el.textArea.focus();
+}
+
+(function () {
+  const node = $("heroQuote");
+  if (!node) return;
+  let i = Math.floor(Math.random() * HERO_QUOTES.length);
+  const show = () => {
+    node.style.opacity = 0;
+    setTimeout(() => { node.textContent = HERO_QUOTES[i % HERO_QUOTES.length]; node.style.opacity = 1; i++; }, 300);
+  };
+  show(); setInterval(show, 7000);
+})();
+
+document.addEventListener("keydown", (e) => {
+  if (state.examState && !state.examState.finished) { examHandleKey(e); return; }
+  if (document.activeElement && document.activeElement.tagName === "INPUT") {
+    if (e.key === "Enter") document.activeElement.blur();
+    return;
+  }
+  if (el.coachPanel.classList.contains("open")) {
+    if (e.key === "Escape") { el.coachPanel.classList.remove("open"); el.coachBackdrop.classList.remove("open"); }
+    return;
+  }
+  if (e.key === "Tab" || e.key === "Escape") { e.preventDefault(); restart(); return; }
+  if (state.finished) return;
+  handleKey(e);
+});
+window.addEventListener("resize", () => {
+  if (el.results.classList.contains("show")) drawChart();
+  requestAnimationFrame(() => { syncLineHeight(); updateCaretPosition(true); });
+});
+
+function showNameModal() {
+  $("nameModal").classList.add("show");
+  setTimeout(() => $("nameInput").focus(), 100);
+  $("nameSave").addEventListener("click", () => {
+    const name = $("nameInput").value.trim().slice(0, 40);
+    if (name) {
+      user = user || defaultUser();
+      user.name = name;
+      saveUser(user);
+      renderGreeting();
+      renderAIStrip();
+    }
+    $("nameModal").classList.remove("show");
+  });
+  $("nameSkip").addEventListener("click", () => $("nameModal").classList.remove("show"));
+  $("nameInput").addEventListener("keydown", e => { if (e.key === "Enter") $("nameSave").click(); });
+}
+
+/* BOOT */
+syncLineHeight();
+bindControls();
+bindCoach();
+
+if (!user) {
+  user = defaultUser();
+  saveUser(user);
+  setTimeout(showNameModal, 500);
+} else {
+  if (user.theme === "light") {
+    document.documentElement.setAttribute("data-theme", "light");
+    el.themeBtn.textContent = "☀️";
+  }
+  if (user.accent && user.accent !== "cosmos") {
+    document.documentElement.setAttribute("data-accent", user.accent);
+    state.accentIdx = ACCENT_THEMES.indexOf(user.accent);
+    if (state.accentIdx < 0) state.accentIdx = 0;
+  }
+  if (user.goalEnabled !== undefined) state.goalEnabled = user.goalEnabled;
+  if (user.goalWpm) state.goalWpm = user.goalWpm;
+}
+
+renderGreeting();
+renderJourney();
+renderAIStrip();
+updateProUI();
+updateGoalUI();
+updateExamRulesDisplay();
+
+state.text = generateText();
+renderText(state.text);
+el.textArea.focus();
+</script>
+</body>
+</html>
